@@ -22,9 +22,14 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // backgroundColor: const Color(0xff26c165),
       // resizeToAvoidBottomInset: false,
       body: Container(
-        color: Colors.white,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage(
+                    "assets/background.png"), //Image Asset Background Image
+                fit: BoxFit.cover)),
         child: Center(
           child: SingleChildScrollView(
             child: Column(
@@ -32,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 SizedBox(height: 50),
-                FlutterLogo(size: 150),
+                Image(image: AssetImage("assets/logo.png"), height: 110.0),
                 SizedBox(height: 25),
                 Container(
                   child: Form(
@@ -139,7 +144,7 @@ class _LoginPageState extends State<LoginPage> {
                                         MediaQuery.of(context).size.height / 18,
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(20),
-                                        color: Colors.blue),
+                                        color: const Color(0xff26c165)),
                                     child: Center(
                                         child: Row(
                                       mainAxisAlignment:
@@ -186,7 +191,7 @@ class _LoginPageState extends State<LoginPage> {
                                   });
                                 }),
                             SizedBox(
-                              height: 16,
+                              height: 10,
                             ),
                           ],
                         ),
@@ -198,10 +203,11 @@ class _LoginPageState extends State<LoginPage> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Don't have an account?"),
+                      Text("Don't have an account?",
+                          style: TextStyle(color: Colors.white)),
                       Text(
                         " SIGN UP",
-                        style: TextStyle(color: Colors.blue),
+                        style: TextStyle(color: Colors.black),
                       ),
                     ],
                   ),
@@ -228,44 +234,43 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _signInButton() {
-    return OutlineButton(
-      splashColor: Colors.grey,
-      onPressed: () {
-        signInWithGoogle().then((result) {
-          if (result != null) {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) {
-                  return FirstScreen();
-                },
+    return InkWell(
+        child: Container(
+            width: MediaQuery.of(context).size.width / 2,
+            height: MediaQuery.of(context).size.height / 18,
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20), color: Colors.white),
+            child: Center(
+                child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Image(
+                      image: AssetImage("assets/google-logo.png"),
+                      height: 35.0),
+                  Text(
+                    'Sign in with Google',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
-            );
-          }
-        });
-      },
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-      highlightElevation: 0,
-      borderSide: BorderSide(color: Colors.grey),
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Image(image: AssetImage("assets/google-logo.png"), height: 35.0),
-            Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: Text(
-                'Sign in with Google',
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.grey,
+            ))),
+        onTap: () {
+          signInWithGoogle().then((result) {
+            if (result != null) {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) {
+                    return FirstScreen();
+                  },
                 ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
+              );
+            }
+          });
+        });
   }
 }

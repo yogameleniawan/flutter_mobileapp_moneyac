@@ -19,6 +19,7 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       // resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        backgroundColor: const Color(0xff26c165),
         title: Text("Sign Up Email"),
       ),
       body: Container(
@@ -29,7 +30,7 @@ class _RegisterPageState extends State<RegisterPage> {
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                FlutterLogo(size: 150),
+                Image(image: AssetImage("assets/logo1.png"), height: 125.0),
                 Container(
                   child: Form(
                     child: Padding(
@@ -45,7 +46,9 @@ class _RegisterPageState extends State<RegisterPage> {
                               child: Text(
                                 "Register",
                                 style: TextStyle(
-                                    fontWeight: FontWeight.w800, fontSize: 25),
+                                    fontWeight: FontWeight.w800,
+                                    fontSize: 25,
+                                    color: const Color(0xff26c165)),
                               ),
                             ),
                             Text(
@@ -138,7 +141,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                         MediaQuery.of(context).size.height / 18,
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(20),
-                                        color: Colors.blue),
+                                        color: const Color(0xff26c165)),
                                     child: Center(
                                         child: Row(
                                       mainAxisAlignment:
