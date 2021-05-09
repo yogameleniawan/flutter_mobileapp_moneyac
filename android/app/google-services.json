@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1033852236152",
+    "project_id": "moneyacapp-7cdc3",
+    "storage_bucket": "moneyacapp-7cdc3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1033852236152:android:2ed9cfb1099ff83bb4d88d",
+        "android_client_info": {
+          "package_name": "com.example.mobileapp_moneyac"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1033852236152-bput6f52mbvlem9tp5n4g94m0m1nc0dh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mobileapp_moneyac",
+            "certificate_hash": "dee38c167267cadcea3525c72e503bd1233c3981"
+          }
+        },
+        {
+          "client_id": "1033852236152-h5ucr6u5hv9cvfs150d7c3l1qqt7rai4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB8NQTbs1qMRA0s-tYpaA5RbRnGGodHCcU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1033852236152-h5ucr6u5hv9cvfs150d7c3l1qqt7rai4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
