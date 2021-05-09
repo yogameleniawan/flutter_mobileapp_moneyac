@@ -43,7 +43,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: Form(
                     child: Padding(
                       padding: const EdgeInsets.only(
-                          top: 5.0, bottom: 15, left: 10, right: 10),
+                          top: 5.0, bottom: 5, left: 10, right: 10),
                       child: Card(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20.0)),
