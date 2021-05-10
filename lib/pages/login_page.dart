@@ -1,7 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mobileapp_moneyac/pages/first_screen.dart';
+import 'package:mobileapp_moneyac/pages/home_screen.dart';
 import 'package:mobileapp_moneyac/pages/register_page.dart';
 import 'package:mobileapp_moneyac/services/sign_in.dart';
 
@@ -144,7 +144,7 @@ class _LoginPageState extends State<LoginPage> {
                                         MediaQuery.of(context).size.height / 18,
                                     decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(20),
-                                        color: const Color(0xff26c165)),
+                                        color: const Color(0xFF131a22)),
                                     child: Center(
                                         child: Row(
                                       mainAxisAlignment:
@@ -176,7 +176,7 @@ class _LoginPageState extends State<LoginPage> {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (context) {
-                                            return FirstScreen(
+                                            return HomeScreen(
                                                 email: email,
                                                 name: name,
                                                 image: image);
@@ -265,7 +265,7 @@ class _LoginPageState extends State<LoginPage> {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (context) {
-                    return FirstScreen();
+                    return HomeScreen();
                   },
                 ),
               );
