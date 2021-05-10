@@ -23,7 +23,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 3,
+      length: 12,
       child: SafeArea(
         child: Scaffold(
           body: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -91,18 +91,46 @@ class _HomeScreenState extends State<HomeScreen> {
                     ]),
                   ),
                   TabBar(
+                    isScrollable: true,
                     indicatorColor: const Color(0xff26c165),
                     unselectedLabelColor: Colors.black,
                     labelColor: const Color(0xff26c165),
                     tabs: [
                       new Container(
-                        child: new Tab(text: 'Popular'),
+                        child: new Tab(text: 'January'),
                       ),
                       new Container(
-                        child: new Tab(text: 'Top Rated'),
+                        child: new Tab(text: 'February'),
                       ),
                       new Container(
-                        child: new Tab(text: 'Upcoming'),
+                        child: new Tab(text: 'March'),
+                      ),
+                      new Container(
+                        child: new Tab(text: 'April'),
+                      ),
+                      new Container(
+                        child: new Tab(text: 'Mei'),
+                      ),
+                      new Container(
+                        child: new Tab(text: 'June'),
+                      ),
+                      new Container(
+                        child: new Tab(text: 'July'),
+                      ),
+                      new Container(
+                        child: new Tab(text: 'August'),
+                      ),
+                      new Container(
+                        child: new Tab(text: 'September'),
+                      ),
+                      new Container(
+                        child: new Tab(text: 'October'),
+                      ),
+                      new Container(
+                        child: new Tab(text: 'November'),
+                      ),
+                      new Container(
+                        child: new Tab(text: 'December'),
                       ),
                     ],
                   ),
@@ -113,6 +141,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         Expanded(child: Text("1")),
                         Expanded(child: Text("2")),
                         Expanded(child: Text("3")),
+                        Expanded(child: Text("4")),
+                        Expanded(child: Text("5")),
+                        Expanded(child: Text("6")),
+                        Expanded(child: Text("7")),
+                        Expanded(child: Text("8")),
+                        Expanded(child: Text("9")),
+                        Expanded(child: Text("10")),
+                        Expanded(child: Text("11")),
+                        Expanded(child: Text("12")),
                       ],
                     ),
                   ),
