@@ -193,8 +193,32 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Container(
-              child: Text("Text Kosong"),
-            ),
+              child: Column(
+                children: [
+                  Text("logout"),
+                  RaisedButton(
+                    onPressed: () {
+                      signOutGoogle();
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) {
+                        return LoginPage();
+                      }), ModalRoute.withName('/'));
+                    },
+                    color: Colors.deepPurple,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Sign Out',
+                        style: TextStyle(fontSize: 25, color: Colors.white),
+                      ),
+                    ),
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(40)),
+                  ),
+                ],
+              ),
+            )
           ]),
       bottomNavigationBar: BottomNavigationBar(
         onTap: onTabTapped, // new
@@ -205,12 +229,22 @@ class _HomeScreenState extends State<HomeScreen> {
             title: Text('Home'),
           ),
           new BottomNavigationBarItem(
-            icon: Icon(Icons.add_box),
-            title: Text('Add'),
-          ),
-          new BottomNavigationBarItem(
               icon: Icon(Icons.person), title: Text('Profile'))
         ],
+      ),
+      floatingActionButton: Container(
+        height: 55.0,
+        width: 55.0,
+        child: FittedBox(
+          child: FloatingActionButton(
+            onPressed: () {},
+            child: Icon(
+              Icons.add,
+              color: Colors.white,
+            ),
+            // elevation: 5.0,
+          ),
+        ),
       ),
     );
   }
