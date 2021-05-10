@@ -22,16 +22,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 12,
-      child: SafeArea(
-        child: Scaffold(
-          body: AnnotatedRegion<SystemUiOverlayStyle>(
-            value: SystemUiOverlayStyle.dark.copyWith(
-              statusBarColor: const Color(0xfff8faf7),
-            ),
+    return Scaffold(
+      body: Container(
+        child: DefaultTabController(
+          length: 12,
+          child: SafeArea(
             child: Container(
-              margin: EdgeInsets.only(top: 40, left: 15, right: 15, bottom: 30),
+              margin: EdgeInsets.only(top: 40, left: 15, right: 15),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -138,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: TabBarView(
                       children: [
                         // first tab bar view widget
-                        Expanded(child: Text("1")),
+                        January(),
                         Expanded(child: Text("2")),
                         Expanded(child: Text("3")),
                         Expanded(child: Text("4")),
@@ -158,6 +155,128 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: 0, // this will be set when a new tab is tapped
+        items: [
+          BottomNavigationBarItem(
+            icon: new Icon(Icons.home),
+            title: new Text('Home'),
+          ),
+          BottomNavigationBarItem(
+            icon: new Icon(Icons.add_box),
+            title: new Text('Add'),
+          ),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person), title: Text('Profile'))
+        ],
+      ),
+    );
+  }
+}
+
+class January extends StatelessWidget {
+  const January({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: 2,
+        itemBuilder: (BuildContext context, int index) {
+          return InkWell(
+            child: Expanded(
+                child: Padding(
+              padding: EdgeInsets.only(
+                top: 20,
+                left: 5,
+                right: 5,
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(2),
+                      topRight: Radius.circular(2),
+                      bottomLeft: Radius.circular(2),
+                      bottomRight: Radius.circular(2)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.5),
+                      spreadRadius: 2,
+                      blurRadius: 2,
+                      offset: Offset(0, 2), // changes position of shadow
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.only(
+                      right: 10, left: 10, top: 10, bottom: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Overview 2020",
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold)),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Text(
+                          "Tap to view full report",
+                          style: TextStyle(color: Colors.black38),
+                        ),
+                      ),
+                      Divider(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Inflow"),
+                          Text(
+                            "Rp. 70.000",
+                            style: TextStyle(color: Colors.blue),
+                          )
+                        ],
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Outflow"),
+                            Text(
+                              "Rp. 20.000",
+                              style: TextStyle(color: Colors.red),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Total",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
+                            ),
+                            Text(
+                              "Rp. 50.000",
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            )),
+            onTap: () {},
+          );
+        },
       ),
     );
   }
