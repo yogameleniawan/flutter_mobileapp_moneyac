@@ -33,9 +33,6 @@ Future<String> signInWithGoogle() async {
     emailGoogle = user.email;
     imageUrl = user.photoURL;
 // Only taking the first part of the name, i.e., First Name
-    if (nameGoogle.contains(" ")) {
-      nameGoogle = nameGoogle.substring(0, nameGoogle.indexOf(" "));
-    }
     assert(!user.isAnonymous);
     assert(await user.getIdToken() != null);
     final User currentUser = _auth.currentUser;
