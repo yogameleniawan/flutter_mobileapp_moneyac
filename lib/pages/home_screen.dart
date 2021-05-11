@@ -174,6 +174,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               StreamBuilder(
                                 stream: FirebaseFirestore.instance
                                     .collection('transaction')
+                                    .where('month', isEqualTo: 'january')
                                     .snapshots(),
                                 builder: (BuildContext context,
                                     AsyncSnapshot<QuerySnapshot> snapshot) {
@@ -182,7 +183,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                       child: CircularProgressIndicator(),
                                     );
                                   }
-
                                   return ListView(
                                     children:
                                         snapshot.data.docs.map((document) {
@@ -193,7 +193,28 @@ class _HomeScreenState extends State<HomeScreen> {
                                   );
                                 },
                               ),
-                              Expanded(child: Text("2")),
+                              StreamBuilder(
+                                stream: FirebaseFirestore.instance
+                                    .collection('transaction')
+                                    .where('month', isEqualTo: 'february')
+                                    .snapshots(),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+                                  return ListView(
+                                    children:
+                                        snapshot.data.docs.map((document) {
+                                      return Container(
+                                        child: February(document: document),
+                                      );
+                                    }).toList(),
+                                  );
+                                },
+                              ),
                               Expanded(child: Text("3")),
                               Expanded(child: Text("4")),
                               Expanded(child: Text("5")),
@@ -254,6 +275,123 @@ class _HomeScreenState extends State<HomeScreen> {
 
 class January extends StatelessWidget {
   January({this.document});
+  final QueryDocumentSnapshot<Object> document;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      child: Expanded(
+          child: Padding(
+        padding: EdgeInsets.only(
+          top: 20,
+          left: 5,
+          right: 5,
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(2),
+                topRight: Radius.circular(2),
+                bottomLeft: Radius.circular(2),
+                bottomRight: Radius.circular(2)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 2,
+                blurRadius: 2,
+                offset: Offset(0, 2), // changes position of shadow
+              ),
+            ],
+          ),
+          child: Padding(
+            padding:
+                const EdgeInsets.only(right: 10, left: 10, top: 10, bottom: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: AssetImage("assets/head.png")),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 35, left: 10),
+                      child: Text("Overview " + document['year'],
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 60, left: 10),
+                      child: Text(
+                        "Tap to view full report",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+                Divider(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Inflow"),
+                    Text(
+                      "Rp. 70.000",
+                      style: TextStyle(color: Colors.blue),
+                    )
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Outflow"),
+                      Text(
+                        "Rp. 20.000",
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Total",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                      Text(
+                        "Rp. 50.000",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      )),
+      onTap: () {},
+    );
+  }
+}
+
+class February extends StatelessWidget {
+  February({this.document});
   final QueryDocumentSnapshot<Object> document;
 
   @override
