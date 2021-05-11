@@ -1,9 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:mobileapp_moneyac/pages/login_page.dart';
 import 'package:mobileapp_moneyac/pages/profile_page.dart';
 import 'package:mobileapp_moneyac/services/sign_in.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({this.email, this.name, this.image});
@@ -172,7 +171,28 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: TabBarView(
                             children: [
                               // first tab bar view widget
-                              January(),
+                              StreamBuilder(
+                                stream: FirebaseFirestore.instance
+                                    .collection('transaction')
+                                    .snapshots(),
+                                builder: (BuildContext context,
+                                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+
+                                  return ListView(
+                                    children:
+                                        snapshot.data.docs.map((document) {
+                                      return Container(
+                                        child: January(document: document),
+                                      );
+                                    }).toList(),
+                                  );
+                                },
+                              ),
                               Expanded(child: Text("2")),
                               Expanded(child: Text("3")),
                               Expanded(child: Text("4")),
@@ -233,108 +253,118 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class January extends StatelessWidget {
-  const January({
-    Key key,
-  }) : super(key: key);
+  January({this.document});
+  final QueryDocumentSnapshot<Object> document;
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: 2,
-        itemBuilder: (BuildContext context, int index) {
-          return InkWell(
-            child: Expanded(
-                child: Padding(
-              padding: EdgeInsets.only(
-                top: 20,
-                left: 5,
-                right: 5,
+    return InkWell(
+      child: Expanded(
+          child: Padding(
+        padding: EdgeInsets.only(
+          top: 20,
+          left: 5,
+          right: 5,
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(2),
+                topRight: Radius.circular(2),
+                bottomLeft: Radius.circular(2),
+                bottomRight: Radius.circular(2)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 2,
+                blurRadius: 2,
+                offset: Offset(0, 2), // changes position of shadow
               ),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(2),
-                      topRight: Radius.circular(2),
-                      bottomLeft: Radius.circular(2),
-                      bottomRight: Radius.circular(2)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.5),
-                      spreadRadius: 2,
-                      blurRadius: 2,
-                      offset: Offset(0, 2), // changes position of shadow
+            ],
+          ),
+          child: Padding(
+            padding:
+                const EdgeInsets.only(right: 10, left: 10, top: 10, bottom: 10),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: 120,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: AssetImage("assets/head.png")),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 35, left: 10),
+                      child: Text("Overview " + document['year'],
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white)),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 60, left: 10),
+                      child: Text(
+                        "Tap to view full report",
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ),
                   ],
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      right: 10, left: 10, top: 10, bottom: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                Divider(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Inflow"),
+                    Text(
+                      "Rp. 70.000",
+                      style: TextStyle(color: Colors.blue),
+                    )
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Overview 2020",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 5),
-                        child: Text(
-                          "Tap to view full report",
-                          style: TextStyle(color: Colors.black38),
-                        ),
-                      ),
-                      Divider(),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("Inflow"),
-                          Text(
-                            "Rp. 70.000",
-                            style: TextStyle(color: Colors.blue),
-                          )
-                        ],
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Outflow"),
-                            Text(
-                              "Rp. 20.000",
-                              style: TextStyle(color: Colors.red),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Total",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18),
-                            ),
-                            Text(
-                              "Rp. 50.000",
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
+                      Text("Outflow"),
+                      Text(
+                        "Rp. 20.000",
+                        style: TextStyle(color: Colors.red),
                       ),
                     ],
                   ),
                 ),
-              ),
-            )),
-            onTap: () {},
-          );
-        },
-      ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Total",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 18),
+                      ),
+                      Text(
+                        "Rp. 50.000",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      )),
+      onTap: () {},
     );
   }
 }
