@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mobileapp_moneyac/pages/login_page.dart';
+import 'package:mobileapp_moneyac/pages/profile_page.dart';
 import 'package:mobileapp_moneyac/services/sign_in.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -192,33 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            Container(
-              child: Column(
-                children: [
-                  Text("logout"),
-                  RaisedButton(
-                    onPressed: () {
-                      signOutGoogle();
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) {
-                        return LoginPage();
-                      }), ModalRoute.withName('/'));
-                    },
-                    color: Colors.deepPurple,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Sign Out',
-                        style: TextStyle(fontSize: 25, color: Colors.white),
-                      ),
-                    ),
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40)),
-                  ),
-                ],
-              ),
-            )
+            ProfilePage(this.email, this.name, this.image),
           ]),
       bottomNavigationBar: BottomNavigationBar(
         onTap: onTabTapped, // new
