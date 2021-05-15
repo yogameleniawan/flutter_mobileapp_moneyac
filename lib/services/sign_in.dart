@@ -9,6 +9,7 @@ String emailGoogle;
 String imageUrl;
 String errorMessageRegister;
 String errorMessageLogin;
+String uid;
 
 Future<String> signInWithGoogle() async {
   await Firebase.initializeApp();
@@ -32,6 +33,7 @@ Future<String> signInWithGoogle() async {
     nameGoogle = user.displayName;
     emailGoogle = user.email;
     imageUrl = user.photoURL;
+    uid = user.uid;
 // Only taking the first part of the name, i.e., First Name
     assert(!user.isAnonymous);
     assert(await user.getIdToken() != null);
@@ -51,6 +53,7 @@ Future<void> signOutGoogle() async {
   imageUrl = "";
   errorMessageLogin = "";
   errorMessageRegister = "";
+  uid = "";
 }
 
 Future<User> signInWithEmailAndPassword(String email, String password) async {
@@ -60,6 +63,7 @@ Future<User> signInWithEmailAndPassword(String email, String password) async {
         email: email, password: password);
     User user = result.user;
     errorMessageLogin = "";
+    uid = user.uid;
     return user;
   } catch (e) {
     if (e.code == 'user-not-found') {
@@ -83,6 +87,7 @@ Future<User> signUp(String email, String password) async {
         email: email, password: password);
     User user = result.user;
     errorMessageRegister = "";
+    uid = user.uid;
     return user;
   } catch (e) {
     if (e.code == 'email-already-in-use') {

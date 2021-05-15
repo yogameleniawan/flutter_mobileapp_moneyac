@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mobileapp_moneyac/pages/profile_page.dart';
 import 'package:mobileapp_moneyac/services/sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({this.email, this.name, this.image});
@@ -22,13 +24,39 @@ class _HomeScreenState extends State<HomeScreen> {
   String name;
   String image =
       "https://www.pngkit.com/png/full/281-2812821_user-account-management-logo-user-icon-png.png";
-
+  User user;
   int _currentIndex = 0;
-  final List<Widget> _children = [];
+  int total = 0;
+  final firestoreInstance = FirebaseFirestore.instance;
 
   @override
   void initState() {
     super.initState();
+  }
+
+  Widget readItems() {
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance
+          .collection('transaction')
+          .where('uid', isEqualTo: uid)
+          .snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        return ListView(
+          children: snapshot.data.docs.map((document) {
+            // setState(() {
+            var temp = document['inflow'] - document['outflow'];
+            total = total + temp;
+            // });
+            return null;
+          }).toList(),
+        );
+      },
+    );
   }
 
   @override
@@ -107,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     ),
                                   ),
                                   Text(
-                                    "Rp. 1.500.000",
+                                    "Rp. " + total.toString(),
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 18,
@@ -171,50 +199,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: TabBarView(
                             children: [
                               // first tab bar view widget
-                              StreamBuilder(
-                                stream: FirebaseFirestore.instance
-                                    .collection('transaction')
-                                    .where('month', isEqualTo: 'january')
-                                    .snapshots(),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return Center(
-                                      child: CircularProgressIndicator(),
-                                    );
-                                  }
-                                  return ListView(
-                                    children:
-                                        snapshot.data.docs.map((document) {
-                                      return Container(
-                                        child: January(document: document),
-                                      );
-                                    }).toList(),
-                                  );
-                                },
-                              ),
-                              StreamBuilder(
-                                stream: FirebaseFirestore.instance
-                                    .collection('transaction')
-                                    .where('month', isEqualTo: 'february')
-                                    .snapshots(),
-                                builder: (BuildContext context,
-                                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return Center(
-                                      child: CircularProgressIndicator(),
-                                    );
-                                  }
-                                  return ListView(
-                                    children:
-                                        snapshot.data.docs.map((document) {
-                                      return Container(
-                                        child: February(document: document),
-                                      );
-                                    }).toList(),
-                                  );
-                                },
-                              ),
+                              StreamerData(month: "january"),
+                              StreamerData(month: "february"),
                               Expanded(child: Text("3")),
                               Expanded(child: Text("4")),
                               Expanded(child: Text("5")),
@@ -273,129 +259,46 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class January extends StatelessWidget {
-  January({this.document});
-  final QueryDocumentSnapshot<Object> document;
+class StreamerData extends StatelessWidget {
+  const StreamerData({Key key, this.month});
+  final String month;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      child: Expanded(
-          child: Padding(
-        padding: EdgeInsets.only(
-          top: 20,
-          left: 5,
-          right: 5,
-        ),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(2),
-                topRight: Radius.circular(2),
-                bottomLeft: Radius.circular(2),
-                bottomRight: Radius.circular(2)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 2,
-                blurRadius: 2,
-                offset: Offset(0, 2), // changes position of shadow
-              ),
-            ],
-          ),
-          child: Padding(
-            padding:
-                const EdgeInsets.only(right: 10, left: 10, top: 10, bottom: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Stack(
-                  children: [
-                    Container(
-                      width: double.infinity,
-                      height: 120,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: AssetImage("assets/head.png")),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 35, left: 10),
-                      child: Text("Overview " + document['year'],
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white)),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 60, left: 10),
-                      child: Text(
-                        "Tap to view full report",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-                Divider(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text("Inflow"),
-                    Text(
-                      "Rp. 70.000",
-                      style: TextStyle(color: Colors.blue),
-                    )
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("Outflow"),
-                      Text(
-                        "Rp. 20.000",
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 5),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Total",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18),
-                      ),
-                      Text(
-                        "Rp. 50.000",
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      )),
-      onTap: () {},
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance
+          .collection('transaction')
+          .where('month', isEqualTo: month)
+          .where('uid', isEqualTo: uid)
+          .snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        return ListView(
+          children: snapshot.data.docs.map((document) {
+            return Container(
+              child: ListDataView(document: document),
+            );
+          }).toList(),
+        );
+      },
     );
   }
 }
 
-class February extends StatelessWidget {
-  February({this.document});
+class ListDataView extends StatelessWidget {
+  ListDataView({this.document});
   final QueryDocumentSnapshot<Object> document;
+  final formatCurrency = new NumberFormat.currency(locale: "en_US", symbol: "");
+  final firestoreInstance = FirebaseFirestore.instance;
+  int total = 0;
 
   @override
   Widget build(BuildContext context) {
+    total += document['inflow'] + total;
     return InkWell(
       child: Expanded(
           child: Padding(
@@ -461,7 +364,7 @@ class February extends StatelessWidget {
                   children: [
                     Text("Inflow"),
                     Text(
-                      "Rp. 70.000",
+                      "Rp. " + formatCurrency.format(document['inflow']),
                       style: TextStyle(color: Colors.blue),
                     )
                   ],
@@ -473,7 +376,7 @@ class February extends StatelessWidget {
                     children: [
                       Text("Outflow"),
                       Text(
-                        "Rp. 20.000",
+                        "Rp. " + formatCurrency.format(document['outflow']),
                         style: TextStyle(color: Colors.red),
                       ),
                     ],
@@ -490,7 +393,9 @@ class February extends StatelessWidget {
                             fontWeight: FontWeight.bold, fontSize: 18),
                       ),
                       Text(
-                        "Rp. 50.000",
+                        "Rp. " +
+                            formatCurrency.format(
+                                document['inflow'] - document['outflow']),
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
