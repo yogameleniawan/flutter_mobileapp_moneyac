@@ -5,6 +5,7 @@ import 'package:mobileapp_moneyac/pages/profile_page.dart';
 import 'package:mobileapp_moneyac/services/sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:intl/intl.dart';
+import 'package:month_picker_dialog/month_picker_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({this.email, this.name, this.image});
@@ -29,35 +30,12 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
   int total = 0;
   final firestoreInstance = FirebaseFirestore.instance;
-
+  DateTime initialDate = DateTime.now();
+  DateTime selectedDate;
   @override
   void initState() {
     super.initState();
-  }
-
-  Widget readItems() {
-    return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('transaction')
-          .where('uid', isEqualTo: uid)
-          .snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (!snapshot.hasData) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        return ListView(
-          children: snapshot.data.docs.map((document) {
-            // setState(() {
-            var temp = document['inflow'] - document['outflow'];
-            total = total + temp;
-            // });
-            return null;
-          }).toList(),
-        );
-      },
-    );
+    selectedDate = initialDate;
   }
 
   @override
@@ -220,18 +198,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: TabBarView(
                             children: [
                               // first tab bar view widget
-                              StreamerData(month: "january"),
-                              StreamerData(month: "february"),
-                              StreamerData(month: "march"),
-                              StreamerData(month: "april"),
-                              StreamerData(month: "mei"),
-                              StreamerData(month: "june"),
-                              StreamerData(month: "july"),
-                              StreamerData(month: "august"),
-                              StreamerData(month: "september"),
-                              StreamerData(month: "october"),
-                              StreamerData(month: "november"),
-                              StreamerData(month: "december"),
+                              StreamerData(month: "1"),
+                              StreamerData(month: "2"),
+                              StreamerData(month: "3"),
+                              StreamerData(month: "4"),
+                              StreamerData(month: "5"),
+                              StreamerData(month: "6"),
+                              StreamerData(month: "7"),
+                              StreamerData(month: "8"),
+                              StreamerData(month: "9"),
+                              StreamerData(month: "10"),
+                              StreamerData(month: "11"),
+                              StreamerData(month: "12"),
                             ],
                           ),
                         ),
@@ -260,7 +238,37 @@ class _HomeScreenState extends State<HomeScreen> {
         width: 55.0,
         child: FittedBox(
           child: FloatingActionButton(
-            onPressed: () {},
+            onPressed: () {
+              showMonthPicker(
+                context: context,
+                firstDate: DateTime(DateTime.now().year - 1, 5),
+                lastDate: DateTime(DateTime.now().year + 1, 9),
+                initialDate: selectedDate ?? initialDate,
+                locale: Locale("en"),
+              ).then((date) {
+                if (date != null) {
+                  setState(() {
+                    selectedDate = date;
+                  });
+                  FirebaseFirestore firestore = FirebaseFirestore.instance;
+                  CollectionReference transaction =
+                      firestore.collection('transaction');
+                  var data = {
+                    'uid': uid,
+                    'inflow': 0,
+                    'outflow': 0,
+                    'year': selectedDate?.year.toString(),
+                    'month': selectedDate?.month.toString(),
+                    'total': 0,
+                  };
+                  transaction
+                      .add(data)
+                      .then((value) => print("Transaction with CustomID added"))
+                      .catchError((error) =>
+                          print("Failed to add transaction: $error"));
+                }
+              });
+            },
             child: Icon(
               Icons.add,
               color: Colors.white,
