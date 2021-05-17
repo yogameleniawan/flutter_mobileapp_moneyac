@@ -241,8 +241,8 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () {
               showMonthPicker(
                 context: context,
-                firstDate: DateTime(DateTime.now().year - 1, 5),
-                lastDate: DateTime(DateTime.now().year + 1, 9),
+                firstDate: DateTime(DateTime.now().year - 10, 5),
+                lastDate: DateTime(DateTime.now().year + 10, 9),
                 initialDate: selectedDate ?? initialDate,
                 locale: Locale("en"),
               ).then((date) {
@@ -250,9 +250,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   setState(() {
                     selectedDate = date;
                   });
-                  FirebaseFirestore firestore = FirebaseFirestore.instance;
-                  CollectionReference transaction =
-                      firestore.collection('transaction');
+                  if (nameUser.contains(" ")) {
+                    nameUser = nameUser.substring(0, nameUser.indexOf(" "));
+                  }
+                  String docId = nameUser + selectedDate?.year.toString();
+                  DocumentReference<Map<String, dynamic>> transactions =
+                      FirebaseFirestore.instance
+                          .collection('/transaction')
+                          .doc(docId);
                   var data = {
                     'uid': uid,
                     'inflow': 0,
@@ -261,11 +266,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     'month': selectedDate?.month.toString(),
                     'total': 0,
                   };
-                  transaction
-                      .add(data)
+                  transactions
+                      .set(data)
                       .then((value) => print("Transaction with CustomID added"))
                       .catchError((error) =>
                           print("Failed to add transaction: $error"));
+                  selectedDate = initialDate;
                 }
               });
             },

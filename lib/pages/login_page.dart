@@ -272,7 +272,8 @@ class _LoginPageState extends State<LoginPage> {
               'uid': uid,
               'name': nameGoogle,
               'email': emailGoogle,
-              'imageUrl': imageUrl
+              'imageUrl': imageUrl,
+              'totalAmount': 0
             };
             users
                 .set(user)

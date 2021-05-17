@@ -200,7 +200,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                         'uid': uid,
                                         'name': nameController.text,
                                         'email': emailController.text,
-                                        'imageUrl': image
+                                        'imageUrl': image,
+                                        'totalAmount': 0
                                       };
                                       users
                                           .set(user)
