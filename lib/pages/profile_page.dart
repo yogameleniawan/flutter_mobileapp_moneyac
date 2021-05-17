@@ -6,9 +6,8 @@ import 'package:mobileapp_moneyac/services/sign_in.dart';
 import 'login_page.dart';
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage(this.email, this.name, this.image);
+  ProfilePage(this.email, this.nameUser, this.image);
   String email;
-  String name;
   String nameUser;
   String image =
       "https://www.pngkit.com/png/full/281-2812821_user-account-management-logo-user-icon-png.png";
@@ -18,18 +17,9 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String nameUser;
-
   @override
   void initState() {
     super.initState();
-    nameUser = nameUser;
-  }
-
-  void updateName(String name) {
-    setState(() {
-      nameUser = name;
-    });
   }
 
   @override
@@ -74,8 +64,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   return Column(
                     children: snapshot.data.docs.map((document) {
                       return Padding(
-                          padding: const EdgeInsets.only(left: 238, top: 138),
-                          child: Text(document['name'],
+                          padding: const EdgeInsets.only(left: 262, top: 138),
+                          child: Text("Profile",
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
@@ -98,7 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(15)),
                 ),
-                hintText: nameUser,
+                hintText: widget.nameUser,
                 hintStyle: TextStyle(fontSize: 15),
                 contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
               ),

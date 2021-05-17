@@ -22,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   _HomeScreenState(this.email, this.name, this.image);
   String email;
   String name;
+  String nameUser;
   String image =
       "https://www.pngkit.com/png/full/281-2812821_user-account-management-logo-user-icon-png.png";
   User user;
@@ -59,31 +60,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget readName() {
-    return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('users')
-          .where('uid', isEqualTo: uid)
-          .snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (!snapshot.hasData) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-        return Column(
-          children: snapshot.data.docs.map((document) {
-            return Text(document['name']);
-          }).toList(),
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    String nameUser;
-
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: PageView(
@@ -263,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            ProfilePage(this.email, nameUser, this.image),
+            ProfilePage(this.email, this.nameUser, this.image),
           ]),
       bottomNavigationBar: BottomNavigationBar(
         onTap: onTabTapped, // new
