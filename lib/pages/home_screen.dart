@@ -59,8 +59,31 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget readName() {
+    return StreamBuilder(
+      stream: FirebaseFirestore.instance
+          .collection('users')
+          .where('uid', isEqualTo: uid)
+          .snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        return Column(
+          children: snapshot.data.docs.map((document) {
+            return Text(document['name']);
+          }).toList(),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    String nameUser;
+
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       body: PageView(
@@ -90,7 +113,27 @@ class _HomeScreenState extends State<HomeScreen> {
                                       style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold)),
-                                  Text(name != null ? name : nameGoogle)
+                                  StreamBuilder(
+                                    stream: FirebaseFirestore.instance
+                                        .collection('users')
+                                        .where('uid', isEqualTo: uid)
+                                        .snapshots(),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return Center(
+                                          child: CircularProgressIndicator(),
+                                        );
+                                      }
+                                      return Column(
+                                        children:
+                                            snapshot.data.docs.map((document) {
+                                          nameUser = document['name'];
+                                          return Text(document['name']);
+                                        }).toList(),
+                                      );
+                                    },
+                                  ),
                                 ],
                               ),
                               Padding(
@@ -201,16 +244,16 @@ class _HomeScreenState extends State<HomeScreen> {
                               // first tab bar view widget
                               StreamerData(month: "january"),
                               StreamerData(month: "february"),
-                              Expanded(child: Text("3")),
-                              Expanded(child: Text("4")),
-                              Expanded(child: Text("5")),
-                              Expanded(child: Text("6")),
-                              Expanded(child: Text("7")),
-                              Expanded(child: Text("8")),
-                              Expanded(child: Text("9")),
-                              Expanded(child: Text("10")),
-                              Expanded(child: Text("11")),
-                              Expanded(child: Text("12")),
+                              StreamerData(month: "march"),
+                              StreamerData(month: "april"),
+                              StreamerData(month: "mei"),
+                              StreamerData(month: "june"),
+                              StreamerData(month: "july"),
+                              StreamerData(month: "august"),
+                              StreamerData(month: "september"),
+                              StreamerData(month: "october"),
+                              StreamerData(month: "november"),
+                              StreamerData(month: "december"),
                             ],
                           ),
                         ),
@@ -220,7 +263,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            ProfilePage(this.email, this.name, this.image),
+            ProfilePage(this.email, nameUser, this.image),
           ]),
       bottomNavigationBar: BottomNavigationBar(
         onTap: onTabTapped, // new
@@ -265,6 +308,8 @@ class StreamerData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseFirestore firestrore = FirebaseFirestore.instance;
+    CollectionReference transaction = firestrore.collection('transaction');
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('transaction')

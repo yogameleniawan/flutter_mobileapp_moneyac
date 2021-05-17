@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:mobileapp_moneyac/services/sign_in.dart';
@@ -13,6 +14,7 @@ class _RegisterPageState extends State<RegisterPage> {
   String error = "";
   TextEditingController passwordController = TextEditingController();
   TextEditingController emailController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +58,29 @@ class _RegisterPageState extends State<RegisterPage> {
                                     ? errorMessageRegister
                                     : "",
                                 style: TextStyle(color: Colors.red)),
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 15.0, right: 14, left: 14, bottom: 8),
+                              child: TextFormField(
+                                controller: nameController,
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15),
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(15)),
+                                  ),
+                                  hintText: "Name",
+                                  hintStyle: TextStyle(fontSize: 15),
+                                  contentPadding: EdgeInsets.fromLTRB(
+                                      20.0, 15.0, 20.0, 15.0),
+                                ),
+                                cursorColor: Colors.black,
+                                keyboardType: TextInputType.emailAddress,
+                              ),
+                            ),
                             Padding(
                               padding: const EdgeInsets.only(
                                   top: 15.0, right: 14, left: 14, bottom: 8),
@@ -165,6 +190,24 @@ class _RegisterPageState extends State<RegisterPage> {
                                           passwordController.text)
                                       .then((result) {
                                     if (result != null) {
+                                      String image =
+                                          "https://www.pngkit.com/png/full/281-2812821_user-account-management-logo-user-icon-png.png";
+                                      DocumentReference<Map<String, dynamic>>
+                                          users = FirebaseFirestore.instance
+                                              .collection('/users')
+                                              .doc(uid);
+                                      var user = {
+                                        'uid': uid,
+                                        'name': nameController.text,
+                                        'email': emailController.text,
+                                        'imageUrl': image
+                                      };
+                                      users
+                                          .set(user)
+                                          .then((value) =>
+                                              print("User with CustomID added"))
+                                          .catchError((error) => print(
+                                              "Failed to add user: $error"));
                                       Navigator.pop(context);
                                     } else {
                                       setState(() {

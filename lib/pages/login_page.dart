@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,8 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseFirestore firestrore = FirebaseFirestore.instance;
+    CollectionReference users = firestrore.collection('users');
     return Scaffold(
       // backgroundColor: const Color(0xff26c165),
       // resizeToAvoidBottomInset: false,
@@ -234,6 +237,8 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _signInButton() {
+    FirebaseFirestore firestrore = FirebaseFirestore.instance;
+
     return InkWell(
         child: Container(
             width: MediaQuery.of(context).size.width / 2,
@@ -261,6 +266,18 @@ class _LoginPageState extends State<LoginPage> {
             ))),
         onTap: () {
           signInWithGoogle().then((result) {
+            DocumentReference<Map<String, dynamic>> users =
+                FirebaseFirestore.instance.collection('/users').doc(uid);
+            var user = {
+              'uid': uid,
+              'name': nameGoogle,
+              'email': emailGoogle,
+              'imageUrl': imageUrl
+            };
+            users
+                .set(user)
+                .then((value) => print("User with CustomID added"))
+                .catchError((error) => print("Failed to add user: $error"));
             if (result != null) {
               Navigator.of(context).push(
                 MaterialPageRoute(
