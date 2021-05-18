@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:mobileapp_moneyac/pages/home_detail.dart';
 import 'package:mobileapp_moneyac/pages/profile_page.dart';
 import 'package:mobileapp_moneyac/services/sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -32,6 +33,10 @@ class _HomeScreenState extends State<HomeScreen> {
   final firestoreInstance = FirebaseFirestore.instance;
   DateTime initialDate = DateTime.now();
   DateTime selectedDate;
+  String docId = "";
+  String tempDocId;
+  String availableDocument = "";
+  bool statusDocument = false;
   @override
   void initState() {
     super.initState();
@@ -253,18 +258,38 @@ class _HomeScreenState extends State<HomeScreen> {
                   if (nameUser.contains(" ")) {
                     nameUser = nameUser.substring(0, nameUser.indexOf(" "));
                   }
-                  String docId = nameUser + selectedDate?.year.toString();
+                  docId = nameUser +
+                      selectedDate?.month.toString() +
+                      selectedDate?.year.toString();
+                  FirebaseFirestore.instance
+                      .collection("transaction")
+                      .doc(docId)
+                      .snapshots()
+                      .listen((DocumentSnapshot event) {
+                    setState(() {
+                      availableDocument = event.get("idDocument");
+                      statusDocument = true;
+                      print("true bos");
+                    });
+                    // availableDocument = event.get("idDocument");
+                  });
+                }
+                if (statusDocument != true) {
+                  tempDocId = docId;
+                  statusDocument = false;
                   DocumentReference<Map<String, dynamic>> transactions =
                       FirebaseFirestore.instance
                           .collection('/transaction')
-                          .doc(docId);
+                          .doc(tempDocId);
                   var data = {
+                    'idDocument': tempDocId,
                     'uid': uid,
                     'inflow': 0,
                     'outflow': 0,
                     'year': selectedDate?.year.toString(),
                     'month': selectedDate?.month.toString(),
                     'total': 0,
+                    'transaction_detail': [],
                   };
                   transactions
                       .set(data)
@@ -272,6 +297,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       .catchError((error) =>
                           print("Failed to add transaction: $error"));
                   selectedDate = initialDate;
+                } else {
+                  statusDocument = false;
                 }
               });
             },
@@ -331,11 +358,47 @@ class ListDataView extends StatelessWidget {
   final QueryDocumentSnapshot<Object> document;
   final formatCurrency = new NumberFormat.currency(locale: "en_US", symbol: "");
   final firestoreInstance = FirebaseFirestore.instance;
-  int total = 0;
 
   @override
   Widget build(BuildContext context) {
-    total += document['inflow'] + total;
+    Future<void> _showMyDialog(String idDocument) async {
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return new AlertDialog(
+            title: new Text('Remove Report'),
+            content: new SingleChildScrollView(
+              child: new ListBody(
+                children: [
+                  new Text('Are you sure to remove report?'),
+                ],
+              ),
+            ),
+            actions: [
+              new FlatButton(
+                child: new Text('YES'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  await FirebaseFirestore.instance
+                      .collection('transaction')
+                      .doc(idDocument)
+                      .delete();
+                },
+              ),
+              new FlatButton(
+                child: new Text('NO'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
+    String idDocument = document['idDocument'];
     return InkWell(
       child: Expanded(
           child: Padding(
@@ -444,7 +507,18 @@ class ListDataView extends StatelessWidget {
           ),
         ),
       )),
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) {
+              return HomeDetail(idDocument: idDocument);
+            },
+          ),
+        );
+      },
+      onLongPress: () async {
+        _showMyDialog(idDocument);
+      },
     );
   }
 }
