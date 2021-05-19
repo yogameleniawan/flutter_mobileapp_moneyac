@@ -266,39 +266,55 @@ class _HomeScreenState extends State<HomeScreen> {
                       .doc(docId)
                       .snapshots()
                       .listen((DocumentSnapshot event) {
-                    setState(() {
-                      availableDocument = event.get("idDocument");
-                      statusDocument = true;
-                      print("true bos");
-                    });
-                    // availableDocument = event.get("idDocument");
+                    if (event.exists) {
+                      tempDocId = docId;
+                      DocumentReference<Map<String, dynamic>> transactions =
+                          FirebaseFirestore.instance
+                              .collection('/transaction')
+                              .doc(tempDocId);
+                      var data = {
+                        'idDocument': event.get("idDocument"),
+                        'uid': event.get("uid"),
+                        'inflow': event.get("inflow"),
+                        'outflow': event.get("outflow"),
+                        'year': event.get("year"),
+                        'month': event.get("month"),
+                        'total': event.get("total"),
+                        'transaction_detail': [],
+                      };
+                      transactions
+                          .set(data)
+                          .then((value) =>
+                              print("Transaction with CustomID added"))
+                          .catchError((error) =>
+                              print("Failed to add transaction: $error"));
+                      selectedDate = initialDate;
+                    } else {
+                      tempDocId = docId;
+                      statusDocument = false;
+                      DocumentReference<Map<String, dynamic>> transactions =
+                          FirebaseFirestore.instance
+                              .collection('/transaction')
+                              .doc(tempDocId);
+                      var data = {
+                        'idDocument': tempDocId,
+                        'uid': uid,
+                        'inflow': 0,
+                        'outflow': 0,
+                        'year': selectedDate?.year.toString(),
+                        'month': selectedDate?.month.toString(),
+                        'total': 0,
+                        'transaction_detail': [],
+                      };
+                      transactions
+                          .set(data)
+                          .then((value) =>
+                              print("Transaction with CustomID added"))
+                          .catchError((error) =>
+                              print("Failed to add transaction: $error"));
+                      selectedDate = initialDate;
+                    }
                   });
-                }
-                if (statusDocument != true) {
-                  tempDocId = docId;
-                  statusDocument = false;
-                  DocumentReference<Map<String, dynamic>> transactions =
-                      FirebaseFirestore.instance
-                          .collection('/transaction')
-                          .doc(tempDocId);
-                  var data = {
-                    'idDocument': tempDocId,
-                    'uid': uid,
-                    'inflow': 0,
-                    'outflow': 0,
-                    'year': selectedDate?.year.toString(),
-                    'month': selectedDate?.month.toString(),
-                    'total': 0,
-                    'transaction_detail': [],
-                  };
-                  transactions
-                      .set(data)
-                      .then((value) => print("Transaction with CustomID added"))
-                      .catchError((error) =>
-                          print("Failed to add transaction: $error"));
-                  selectedDate = initialDate;
-                } else {
-                  statusDocument = false;
                 }
               });
             },
