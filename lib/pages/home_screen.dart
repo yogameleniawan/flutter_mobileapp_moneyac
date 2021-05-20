@@ -30,13 +30,9 @@ class _HomeScreenState extends State<HomeScreen> {
   User user;
   int _currentIndex = 0;
   int total = 0;
-  final firestoreInstance = FirebaseFirestore.instance;
   DateTime initialDate = DateTime.now();
   DateTime selectedDate;
   String docId = "";
-  String tempDocId;
-  String availableDocument = "";
-  bool statusDocument = false;
   @override
   void initState() {
     super.initState();
@@ -255,67 +251,64 @@ class _HomeScreenState extends State<HomeScreen> {
                   setState(() {
                     selectedDate = date;
                   });
-                  if (nameUser.contains(" ")) {
-                    nameUser = nameUser.substring(0, nameUser.indexOf(" "));
-                  }
-                  docId = nameUser +
-                      selectedDate?.month.toString() +
-                      selectedDate?.year.toString();
-                  FirebaseFirestore.instance
-                      .collection("transaction")
-                      .doc(docId)
-                      .snapshots()
-                      .listen((DocumentSnapshot event) {
-                    if (event.exists) {
-                      tempDocId = docId;
-                      DocumentReference<Map<String, dynamic>> transactions =
-                          FirebaseFirestore.instance
-                              .collection('/transaction')
-                              .doc(tempDocId);
-                      var data = {
-                        'idDocument': event.get("idDocument"),
-                        'uid': event.get("uid"),
-                        'inflow': event.get("inflow"),
-                        'outflow': event.get("outflow"),
-                        'year': event.get("year"),
-                        'month': event.get("month"),
-                        'total': event.get("total"),
-                        'transaction_detail': [],
-                      };
-                      transactions
-                          .set(data)
-                          .then((value) =>
-                              print("Transaction with CustomID added"))
-                          .catchError((error) =>
-                              print("Failed to add transaction: $error"));
-                      selectedDate = initialDate;
-                    } else {
-                      tempDocId = docId;
-                      statusDocument = false;
-                      DocumentReference<Map<String, dynamic>> transactions =
-                          FirebaseFirestore.instance
-                              .collection('/transaction')
-                              .doc(tempDocId);
-                      var data = {
-                        'idDocument': tempDocId,
-                        'uid': uid,
-                        'inflow': 0,
-                        'outflow': 0,
-                        'year': selectedDate?.year.toString(),
-                        'month': selectedDate?.month.toString(),
-                        'total': 0,
-                        'transaction_detail': [],
-                      };
-                      transactions
-                          .set(data)
-                          .then((value) =>
-                              print("Transaction with CustomID added"))
-                          .catchError((error) =>
-                              print("Failed to add transaction: $error"));
-                      selectedDate = initialDate;
-                    }
-                  });
                 }
+                if (nameUser.contains(" ")) {
+                  nameUser = nameUser.substring(0, nameUser.indexOf(" "));
+                }
+                docId = nameUser +
+                    selectedDate?.month.toString() +
+                    selectedDate?.year.toString();
+                FirebaseFirestore.instance
+                    .collection("transaction")
+                    .doc(docId)
+                    .snapshots()
+                    .listen((DocumentSnapshot event) {
+                  if (event.exists) {
+                    DocumentReference<Map<String, dynamic>> transactions =
+                        FirebaseFirestore.instance
+                            .collection('/transaction')
+                            .doc(docId);
+                    var data = {
+                      'idDocument': event.get("idDocument"),
+                      'uid': event.get("uid"),
+                      'inflow': event.get("inflow"),
+                      'outflow': event.get("outflow"),
+                      'year': event.get("year"),
+                      'month': event.get("month"),
+                      'total': event.get("total"),
+                      'transaction_detail': [],
+                    };
+                    transactions
+                        .set(data)
+                        .then(
+                            (value) => print("Transaction with CustomID added"))
+                        .catchError((error) =>
+                            print("Failed to add transaction: $error"));
+                    docId = "";
+                  } else {
+                    DocumentReference<Map<String, dynamic>> transactions =
+                        FirebaseFirestore.instance
+                            .collection('/transaction')
+                            .doc(docId);
+                    var data = {
+                      'idDocument': docId,
+                      'uid': uid,
+                      'inflow': 0,
+                      'outflow': 0,
+                      'year': selectedDate?.year.toString(),
+                      'month': selectedDate?.month.toString(),
+                      'total': 0,
+                      'transaction_detail': [],
+                    };
+                    transactions
+                        .set(data)
+                        .then(
+                            (value) => print("Transaction with CustomID added"))
+                        .catchError((error) =>
+                            print("Failed to add transaction: $error"));
+                    docId = "";
+                  }
+                });
               });
             },
             child: Icon(
