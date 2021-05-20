@@ -224,7 +224,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ]),
       bottomNavigationBar: BottomNavigationBar(
         onTap: onTabTapped, // new
-        currentIndex: _currentIndex, // new
+        currentIndex: _currentIndex,
+        // new
         items: [
           new BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -276,7 +277,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       'year': event.get("year"),
                       'month': event.get("month"),
                       'total': event.get("total"),
-                      'transaction_detail': [],
                     };
                     transactions
                         .set(data)
@@ -298,7 +298,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       'year': selectedDate?.year.toString(),
                       'month': selectedDate?.month.toString(),
                       'total': 0,
-                      'transaction_detail': [],
                     };
                     transactions
                         .set(data)
@@ -315,7 +314,6 @@ class _HomeScreenState extends State<HomeScreen> {
               Icons.add,
               color: Colors.white,
             ),
-            // elevation: 5.0,
           ),
         ),
       ),
@@ -408,6 +406,35 @@ class ListDataView extends StatelessWidget {
     }
 
     String idDocument = document['idDocument'];
+    String month;
+    String year = document['year'];
+    String dataMonth = document['month'];
+
+    if (document['month'] == "1") {
+      month = "January";
+    } else if (document['month'] == "2") {
+      month = "February";
+    } else if (document['month'] == "3") {
+      month = "March";
+    } else if (document['month'] == "4") {
+      month = "April";
+    } else if (document['month'] == "5") {
+      month = "Mei";
+    } else if (document['month'] == "6") {
+      month = "June";
+    } else if (document['month'] == "7") {
+      month = "July";
+    } else if (document['month'] == "8") {
+      month = "August";
+    } else if (document['month'] == "9") {
+      month = "September";
+    } else if (document['month'] == "10") {
+      month = "October";
+    } else if (document['month'] == "11") {
+      month = "November";
+    } else if (document['month'] == "12") {
+      month = "December";
+    }
     return InkWell(
       child: Expanded(
           child: Padding(
@@ -465,6 +492,13 @@ class ListDataView extends StatelessWidget {
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 80, left: 12),
+                      child: Text(
+                        "Long press to delete report",
+                        style: TextStyle(color: Colors.white, fontSize: 11),
+                      ),
+                    ),
                   ],
                 ),
                 Divider(),
@@ -520,7 +554,11 @@ class ListDataView extends StatelessWidget {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) {
-              return HomeDetail(idDocument: idDocument);
+              return HomeDetail(
+                  idDocument: idDocument,
+                  month: month,
+                  year: year,
+                  dataMonth: dataMonth);
             },
           ),
         );

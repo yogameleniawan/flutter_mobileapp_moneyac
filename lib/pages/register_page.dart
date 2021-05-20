@@ -60,7 +60,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 style: TextStyle(color: Colors.red)),
                             Padding(
                               padding: const EdgeInsets.only(
-                                  top: 15.0, right: 14, left: 14, bottom: 8),
+                                  top: 15.0, right: 14, left: 14),
                               child: TextFormField(
                                 controller: nameController,
                                 style: TextStyle(
