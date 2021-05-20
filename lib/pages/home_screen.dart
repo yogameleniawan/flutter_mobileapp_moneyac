@@ -555,10 +555,11 @@ class ListDataView extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) {
               return HomeDetail(
-                  idDocument: idDocument,
-                  month: month,
-                  year: year,
-                  dataMonth: dataMonth);
+                idDocument: idDocument,
+                month: month,
+                year: year,
+                dataMonth: dataMonth,
+              );
             },
           ),
         );

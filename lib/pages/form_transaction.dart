@@ -1,16 +1,41 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:mobileapp_moneyac/services/sign_in.dart';
 import 'package:date_utils/date_utils.dart';
 
 class FormTransaction extends StatefulWidget {
-  FormTransaction({Key key, this.month, this.year}) : super(key: key);
+  FormTransaction({Key key, this.month, this.year, this.nameUser})
+      : super(key: key);
+  String nameUser;
   String month;
   String year;
+
   @override
   _FormTransactionState createState() => _FormTransactionState();
 }
 
 class _FormTransactionState extends State<FormTransaction> {
+  DateTime selectedDate;
+  String docId;
+  String _chosenValue;
+  int inflow;
+  int outflow;
+  final Map<String, IconData> _data = Map.fromIterables([
+    'Please choose Inflow/Outflow',
+    'Inflow',
+    'Outflow'
+  ], [
+    Icons.search,
+    Icons.add_circle_outline_sharp,
+    Icons.remove_circle_outline_sharp
+  ]);
+  String selectedType;
+  IconData _selectedIcon;
+  TextEditingController dateController = new TextEditingController();
+  TextEditingController nameController = new TextEditingController();
+  TextEditingController totalController = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,6 +49,7 @@ class _FormTransactionState extends State<FormTransaction> {
             Padding(
               padding: const EdgeInsets.only(top: 15.0, right: 14, left: 14),
               child: TextFormField(
+                controller: nameController,
                 style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
@@ -32,7 +58,7 @@ class _FormTransactionState extends State<FormTransaction> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(15)),
                   ),
-                  hintText: "Name",
+                  hintText: "Name Transaction",
                   hintStyle: TextStyle(fontSize: 15),
                   contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                 ),
@@ -44,6 +70,7 @@ class _FormTransactionState extends State<FormTransaction> {
               padding: const EdgeInsets.only(
                   top: 15.0, right: 14, left: 14, bottom: 8),
               child: TextFormField(
+                controller: totalController,
                 style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
@@ -52,18 +79,24 @@ class _FormTransactionState extends State<FormTransaction> {
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(15)),
                   ),
-                  hintText: "Email",
+                  hintText: "Total Value",
+                  labelText: "Amount",
                   hintStyle: TextStyle(fontSize: 15),
                   contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                 ),
                 cursorColor: Colors.black,
-                keyboardType: TextInputType.emailAddress,
+                keyboardType: TextInputType.number,
+                inputFormatters: <TextInputFormatter>[
+                  FilteringTextInputFormatter.digitsOnly
+                ],
               ),
             ),
             Padding(
               padding: const EdgeInsets.only(
                   top: 5.0, right: 14, left: 14, bottom: 8),
               child: TextFormField(
+                readOnly: true,
+                controller: dateController,
                 style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.bold,
@@ -73,12 +106,11 @@ class _FormTransactionState extends State<FormTransaction> {
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                     ),
                     hintText: "Date",
+                    labelText: "Day",
                     contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
                     hintStyle: TextStyle(fontSize: 15),
                     suffixIcon: GestureDetector(
                       onTap: () {
-                        print(int.parse(widget.year));
-                        print(int.parse(widget.month));
                         showDatePicker(
                           context: context,
                           initialDate: DateTime(
@@ -87,15 +119,85 @@ class _FormTransactionState extends State<FormTransaction> {
                               int.parse(widget.year), int.parse(widget.month)),
                           lastDate: DateTime(int.parse(widget.year),
                               int.parse(widget.month) + 1, 0),
-                        ).then((date) {});
+                        ).then((date) {
+                          if (date != null) {
+                            setState(() {
+                              selectedDate = date;
+                              dateController.text =
+                                  DateFormat('dd').format(selectedDate);
+                            });
+                          }
+                        });
                       },
                       child: Icon(Icons.date_range_rounded),
                     )),
                 cursorColor: Colors.black,
               ),
             ),
-            SizedBox(
-              height: 16,
+            Center(
+              child: Container(
+                padding: EdgeInsets.all(10.0),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                      items: _data.keys.map((String val) {
+                        return DropdownMenuItem<String>(
+                          value: val,
+                          child: Row(
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 10.0),
+                                child: Icon(_data[val]),
+                              ),
+                              Text(val),
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                      hint: Row(
+                        children: <Widget>[
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 12.0),
+                            child: Icon(
+                              _selectedIcon ?? _data.values.toList()[0],
+                              color: _selectedIcon ==
+                                      Icons.remove_circle_outline_sharp
+                                  ? Colors.red
+                                  : _selectedIcon ==
+                                          Icons.add_circle_outline_sharp
+                                      ? Colors.green
+                                      : Colors.black54,
+                            ),
+                          ),
+                          Text(
+                            selectedType ?? _data.keys.toList()[0],
+                            style: TextStyle(
+                                color: selectedType == "Outflow"
+                                    ? Colors.red
+                                    : selectedType == "Inflow"
+                                        ? Colors.green
+                                        : Colors.black54),
+                          ),
+                        ],
+                      ),
+                      onChanged: (String val) {
+                        setState(() {
+                          selectedType = val;
+                          _selectedIcon = _data[val];
+                        });
+                        if (selectedType == "Inflow") {
+                          setState(() {
+                            inflow = int.parse(totalController.text);
+                            outflow = 0;
+                          });
+                        } else if (selectedType == "Outflow") {
+                          setState(() {
+                            outflow = int.parse(totalController.text);
+                            inflow = 0;
+                          });
+                        }
+                      }),
+                ),
+              ),
             ),
             InkWell(
                 child: Container(
@@ -109,11 +211,11 @@ class _FormTransactionState extends State<FormTransaction> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: <Widget>[
                         Icon(
-                          Icons.email,
+                          Icons.add_box,
                           color: Colors.white,
                         ),
                         Text(
-                          'Sign Up with Email',
+                          'Add Transaction',
                           style: TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.bold,
@@ -121,7 +223,68 @@ class _FormTransactionState extends State<FormTransaction> {
                         ),
                       ],
                     ))),
-                onTap: () {}),
+                onTap: () {
+                  if (widget.nameUser.contains(" ")) {
+                    widget.nameUser = widget.nameUser
+                        .substring(0, widget.nameUser.indexOf(" "));
+                  }
+                  docId = widget.nameUser +
+                      selectedDate?.day.toString() +
+                      selectedDate?.month.toString() +
+                      selectedDate?.year.toString();
+                  FirebaseFirestore.instance
+                      .collection("transaction_detail")
+                      .doc(docId)
+                      .snapshots()
+                      .listen((DocumentSnapshot event) {
+                    if (event.exists) {
+                      DocumentReference<Map<String, dynamic>> transactions =
+                          FirebaseFirestore.instance
+                              .collection('/transaction_detail')
+                              .doc(docId);
+                      var data = {
+                        'idDocument': event.get("idDocument"),
+                        'name': event.get("name"),
+                        'uid': event.get("uid"),
+                        'inflow': event.get("inflow"),
+                        'outflow': event.get("outflow"),
+                        'year': event.get("year"),
+                        'month': event.get("month"),
+                        'day': event.get("day")
+                      };
+                      transactions
+                          .set(data)
+                          .then((value) =>
+                              print("Transaction with CustomID added"))
+                          .catchError((error) =>
+                              print("Failed to add transaction: $error"));
+                      docId = "";
+                    } else {
+                      DocumentReference<Map<String, dynamic>> transactions =
+                          FirebaseFirestore.instance
+                              .collection('/transaction_detail')
+                              .doc(docId);
+                      var data = {
+                        'idDocument': docId,
+                        'name': nameController.text,
+                        'uid': uid,
+                        'inflow': inflow,
+                        'outflow': outflow,
+                        'year': selectedDate?.year.toString(),
+                        'month': selectedDate?.month.toString(),
+                        'day': selectedDate?.day.toString(),
+                      };
+                      transactions
+                          .set(data)
+                          .then((value) =>
+                              print("Transaction with CustomID added"))
+                          .catchError((error) =>
+                              print("Failed to add transaction: $error"));
+                      docId = "";
+                    }
+                  });
+                  Navigator.pop(context);
+                }),
           ],
         ),
       ),
