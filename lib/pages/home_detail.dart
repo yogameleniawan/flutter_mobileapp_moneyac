@@ -103,8 +103,10 @@ class _HomeDetailState extends State<HomeDetail> {
               ],
             ),
             Expanded(
-                child:
-                    StreamerData(month: widget.dataMonth, year: widget.year)),
+                child: StreamerData(
+                    month: widget.dataMonth,
+                    year: widget.year,
+                    idDocument: widget.idDocument)),
           ],
         ),
       ),
@@ -137,18 +139,16 @@ class _HomeDetailState extends State<HomeDetail> {
 }
 
 class StreamerData extends StatelessWidget {
-  const StreamerData({Key key, this.month, this.year});
+  const StreamerData({Key key, this.month, this.year, this.idDocument});
+  final String idDocument;
   final String month;
   final String year;
 
   @override
   Widget build(BuildContext context) {
-    FirebaseFirestore firestrore = FirebaseFirestore.instance;
-    CollectionReference transaction =
-        firestrore.collection('transaction_detail');
     return StreamBuilder(
       stream: FirebaseFirestore.instance
-          .collection('transaction_detail')
+          .collection('transaction/$idDocument/transaction_detail')
           .where('month', isEqualTo: month)
           .where('year', isEqualTo: year)
           .where('uid', isEqualTo: uid)
@@ -162,7 +162,8 @@ class StreamerData extends StatelessWidget {
         return ListView(
           children: snapshot.data.docs.map((document) {
             return Container(
-              child: ListDataView(document: document),
+              child: ListDataView(
+                  document: document, idDocumentTransaction: idDocument),
             );
           }).toList(),
         );
@@ -172,12 +173,53 @@ class StreamerData extends StatelessWidget {
 }
 
 class ListDataView extends StatelessWidget {
-  ListDataView({this.document});
+  ListDataView({this.document, this.idDocumentTransaction});
   final QueryDocumentSnapshot<Object> document;
   final firestoreInstance = FirebaseFirestore.instance;
+  final String idDocumentTransaction;
 
   @override
   Widget build(BuildContext context) {
+    Future<void> _showMyDialog(String idDocument) async {
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return new AlertDialog(
+            title: new Text('Remove Report'),
+            content: new SingleChildScrollView(
+              child: new ListBody(
+                children: [
+                  new Text('Are you sure to remove report?'),
+                ],
+              ),
+            ),
+            actions: [
+              new FlatButton(
+                child: new Text('YES'),
+                onPressed: () async {
+                  Navigator.of(context).pop();
+                  print(idDocumentTransaction + "idDocTransaction");
+                  print(idDocument + "idDoc");
+                  await FirebaseFirestore.instance
+                      .collection(
+                          'transaction/$idDocumentTransaction/transaction_detail')
+                      .doc(idDocument)
+                      .delete();
+                },
+              ),
+              new FlatButton(
+                child: new Text('NO'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     return InkWell(
       child: Expanded(
           child: Padding(
@@ -209,7 +251,7 @@ class ListDataView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(document['inflow'].toString()),
+                Text(document['idDocument'].toString()),
                 Text(document['name'])
               ],
             ),
@@ -217,6 +259,9 @@ class ListDataView extends StatelessWidget {
         ),
       )),
       onTap: () {},
+      onLongPress: () async {
+        _showMyDialog(document['idDocument'].toString());
+      },
     );
   }
 }

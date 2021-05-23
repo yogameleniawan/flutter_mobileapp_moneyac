@@ -19,6 +19,7 @@ class FormTransaction extends StatefulWidget {
 class _FormTransactionState extends State<FormTransaction> {
   DateTime selectedDate;
   String docId;
+  String transactionId;
   String _chosenValue;
   int inflow;
   int outflow;
@@ -232,7 +233,12 @@ class _FormTransactionState extends State<FormTransaction> {
                       selectedDate?.day.toString() +
                       selectedDate?.month.toString() +
                       selectedDate?.year.toString();
+                  transactionId = widget.nameUser +
+                      selectedDate?.month.toString() +
+                      selectedDate?.year.toString();
                   FirebaseFirestore.instance
+                      .collection("transaction")
+                      .doc(transactionId)
                       .collection("transaction_detail")
                       .doc(docId)
                       .snapshots()
@@ -240,8 +246,13 @@ class _FormTransactionState extends State<FormTransaction> {
                     if (event.exists) {
                       DocumentReference<Map<String, dynamic>> transactions =
                           FirebaseFirestore.instance
-                              .collection('/transaction_detail')
+                              .collection("transaction")
+                              .doc(transactionId)
+                              .collection("transaction_detail")
                               .doc(docId);
+                      String tempIdDocument = event.get("idDocument");
+                      int index = int.parse(tempIdDocument[0]);
+                      print(index);
                       var data = {
                         'idDocument': event.get("idDocument"),
                         'name': event.get("name"),
@@ -250,7 +261,8 @@ class _FormTransactionState extends State<FormTransaction> {
                         'outflow': event.get("outflow"),
                         'year': event.get("year"),
                         'month': event.get("month"),
-                        'day': event.get("day")
+                        'day': event.get("day"),
+                        'transaction_id': event.get("transaction_id")
                       };
                       transactions
                           .set(data)
@@ -262,7 +274,9 @@ class _FormTransactionState extends State<FormTransaction> {
                     } else {
                       DocumentReference<Map<String, dynamic>> transactions =
                           FirebaseFirestore.instance
-                              .collection('/transaction_detail')
+                              .collection("transaction")
+                              .doc(transactionId)
+                              .collection("transaction_detail")
                               .doc(docId);
                       var data = {
                         'idDocument': docId,
@@ -273,6 +287,7 @@ class _FormTransactionState extends State<FormTransaction> {
                         'year': selectedDate?.year.toString(),
                         'month': selectedDate?.month.toString(),
                         'day': selectedDate?.day.toString(),
+                        'transaction_id': transactionId
                       };
                       transactions
                           .set(data)
