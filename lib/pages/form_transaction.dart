@@ -265,6 +265,41 @@ class _FormTransactionState extends State<FormTransaction> {
                               print("Transaction with CustomID added"))
                           .catchError((error) =>
                               print("Failed to add transaction: $error"));
+                      /////
+                      DocumentReference<Map<String, dynamic>>
+                          transaction_amount = FirebaseFirestore.instance
+                              .collection("transaction")
+                              .doc(transactionId)
+                              .collection("transaction_detail")
+                              .doc(docId);
+                      int inflowDetail = event.get('inflow');
+                      int inflowTotal = inflow + inflowDetail;
+                      int outflowDetail = event.get('outflow');
+                      int outflowTotal = outflow + outflowDetail;
+                      if (selectedType == "Inflow") {
+                        var dataInflow = {
+                          'inflow': inflowTotal,
+                          'outflow': event.get('outflow'),
+                        };
+                        transaction_amount
+                            .update(dataInflow)
+                            .then((value) =>
+                                print("Transaction with CustomID added"))
+                            .catchError((error) =>
+                                print("Failed to add transaction: $error"));
+                      } else if (selectedType == "Outflow") {
+                        var dataOutflow = {
+                          'inflow': event.get('inflow'),
+                          'outflow': outflowTotal,
+                        };
+                        transaction_amount
+                            .update(dataOutflow)
+                            .then((value) =>
+                                print("Transaction with CustomID added"))
+                            .catchError((error) =>
+                                print("Failed to add transaction: $error"));
+                      }
+                      ////////////////
                       docId = "";
                     } else {
                       DocumentReference<Map<String, dynamic>>

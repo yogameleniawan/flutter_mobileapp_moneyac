@@ -12,7 +12,9 @@ class HomeList extends StatefulWidget {
       this.transactionId,
       this.year,
       this.month,
-      this.nameUser})
+      this.nameUser,
+      this.inflowDetail,
+      this.outflowDetail})
       : super(key: key);
   String day;
   String idDocument;
@@ -20,6 +22,8 @@ class HomeList extends StatefulWidget {
   String month;
   String year;
   String nameUser;
+  int inflowDetail;
+  int outflowDetail;
 
   @override
   _HomeListState createState() => _HomeListState();
@@ -139,7 +143,9 @@ class _HomeListState extends State<HomeList> {
                     month: widget.month,
                     year: widget.year,
                     idDocument: widget.idDocument,
-                    transactionId: widget.transactionId)),
+                    transactionId: widget.transactionId,
+                    inflowDetail: widget.inflowDetail,
+                    outflowDetail: widget.outflowDetail)),
           ],
         ),
       ),
@@ -178,12 +184,16 @@ class StreamerData extends StatelessWidget {
       this.year,
       this.idDocument,
       this.nameMonth,
-      this.transactionId});
+      this.transactionId,
+      this.inflowDetail,
+      this.outflowDetail});
   final String idDocument;
   final String transactionId;
   final String month;
   final String nameMonth;
   final String year;
+  final int inflowDetail;
+  final int outflowDetail;
 
   @override
   Widget build(BuildContext context) {
@@ -209,7 +219,9 @@ class StreamerData extends StatelessWidget {
                   document: document,
                   idDocumentTransaction: idDocument,
                   nameMonth: nameMonth,
-                  idDocumentList: idDocumentList),
+                  idDocumentList: idDocumentList,
+                  inflowDetail: inflowDetail,
+                  outflowDetail: outflowDetail),
             );
           }).toList(),
         );
@@ -223,13 +235,17 @@ class ListDataView extends StatelessWidget {
       {this.document,
       this.idDocumentTransaction,
       this.nameMonth,
-      this.idDocumentList});
+      this.idDocumentList,
+      this.inflowDetail,
+      this.outflowDetail});
   final QueryDocumentSnapshot<Object> document;
   final firestoreInstance = FirebaseFirestore.instance;
   final String idDocumentTransaction;
   final String idDocumentList;
   final String nameMonth;
   final formatCurrency = new NumberFormat.currency(locale: "en_US", symbol: "");
+  final int inflowDetail;
+  final int outflowDetail;
 
   @override
   Widget build(BuildContext context) {

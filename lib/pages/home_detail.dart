@@ -332,6 +332,8 @@ class ListDataView extends StatelessWidget {
                 month: document['month'],
                 year: document['year'],
                 transactionId: transactionId,
+                inflowDetail: document['inflow'],
+                outflowDetail: document['outflow'],
               );
             },
           ),
