@@ -186,6 +186,7 @@ class ListDataView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String idTransactionDetail = document['idDocument'];
     Future<void> _showMyDialog(String idDocument) async {
       return showDialog<void>(
         context: context,
@@ -312,7 +313,8 @@ class ListDataView extends StatelessWidget {
                       ],
                     ),
                   ],
-                )
+                ),
+                Divider(),
               ],
             ),
           ),
