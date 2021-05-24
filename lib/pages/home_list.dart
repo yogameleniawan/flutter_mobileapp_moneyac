@@ -7,12 +7,14 @@ import 'form_transaction.dart';
 class HomeList extends StatefulWidget {
   HomeList(
       {Key key,
+      this.day,
       this.idDocument,
       this.transactionId,
       this.year,
       this.month,
       this.nameUser})
       : super(key: key);
+  String day;
   String idDocument;
   String transactionId;
   String month;
@@ -83,9 +85,50 @@ class _HomeListState extends State<HomeList> {
                 Padding(
                   padding: const EdgeInsets.only(top: 105, left: 14),
                   child: Container(
-                    child: Text(
-                      "List Transaction in ",
-                      style: TextStyle(color: Colors.white),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "List Transaction in ",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        Text(
+                          widget.day +
+                              " " +
+                              (widget.month == "1"
+                                  ? "January"
+                                  : widget.month == "2"
+                                      ? "February"
+                                      : widget.month == "3"
+                                          ? "March"
+                                          : widget.month == "4"
+                                              ? "April"
+                                              : widget.month == "5"
+                                                  ? "Mei"
+                                                  : widget.month == "6"
+                                                      ? "June"
+                                                      : widget.month == "7"
+                                                          ? "July"
+                                                          : widget.month == "8"
+                                                              ? "August"
+                                                              : widget.month ==
+                                                                      "9"
+                                                                  ? "September"
+                                                                  : widget.month ==
+                                                                          "10"
+                                                                      ? "October"
+                                                                      : widget.month ==
+                                                                              "11"
+                                                                          ? "November"
+                                                                          : "December") +
+                              " " +
+                              widget.year,
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold),
+                        )
+                      ],
                     ),
                   ),
                 ),

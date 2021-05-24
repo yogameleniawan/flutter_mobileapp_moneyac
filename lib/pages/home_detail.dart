@@ -327,6 +327,7 @@ class ListDataView extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) {
               return HomeList(
+                day: document['day'],
                 idDocument: idTransactionDetail,
                 month: document['month'],
                 year: document['year'],
