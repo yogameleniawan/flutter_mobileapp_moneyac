@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mobileapp_moneyac/services/sign_in.dart';
 import 'form_transaction.dart';
 
@@ -185,6 +186,7 @@ class ListDataView extends StatelessWidget {
   final String idDocumentTransaction;
   final String idDocumentList;
   final String nameMonth;
+  final formatCurrency = new NumberFormat.currency(locale: "en_US", symbol: "");
 
   @override
   Widget build(BuildContext context) {
@@ -264,13 +266,26 @@ class ListDataView extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(document['name'],
-                            style:
-                                TextStyle(color: Colors.black, fontSize: 16)),
+                        Row(
+                          children: [
+                            Icon(
+                                document['outflow'] == 0
+                                    ? Icons.add_circle_outline_sharp
+                                    : Icons.remove_circle_outline_sharp,
+                                color: document['outflow'] == 0
+                                    ? Colors.green
+                                    : Colors.red),
+                            Text(" " + document['name'],
+                                style: TextStyle(
+                                    color: Colors.black, fontSize: 16)),
+                          ],
+                        ),
                         Text(
                             document['inflow'] == 0
-                                ? " - Rp. " + document['inflow'].toString()
-                                : " + Rp. " + document['outflow'].toString(),
+                                ? " - Rp. " +
+                                    formatCurrency.format(document['outflow'])
+                                : " + Rp. " +
+                                    formatCurrency.format(document['inflow']),
                             style: document['inflow'] == 0
                                 ? TextStyle(color: Colors.red)
                                 : TextStyle(color: Colors.green)),
