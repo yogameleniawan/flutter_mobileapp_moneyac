@@ -311,8 +311,8 @@ class _FormTransactionState extends State<FormTransaction> {
                       var dataDetail = {
                         'idDocument': docId,
                         'uid': uid,
-                        'inflow': 0,
-                        'outflow': 0,
+                        'inflow': inflow,
+                        'outflow': outflow,
                         'year': selectedDate?.year.toString(),
                         'weekday': selectedDate?.weekday.toString(),
                         'month': selectedDate?.month.toString(),
@@ -347,6 +347,7 @@ class _FormTransactionState extends State<FormTransaction> {
                               print("Transaction with CustomID added"))
                           .catchError((error) =>
                               print("Failed to add transaction: $error"));
+
                       docId = "";
                     }
                   });
