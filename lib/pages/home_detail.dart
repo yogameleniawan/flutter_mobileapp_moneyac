@@ -106,7 +106,8 @@ class _HomeDetailState extends State<HomeDetail> {
                 child: StreamerData(
                     month: widget.dataMonth,
                     year: widget.year,
-                    idDocument: widget.idDocument)),
+                    idDocument: widget.idDocument,
+                    nameMonth: widget.month)),
           ],
         ),
       ),
@@ -139,9 +140,11 @@ class _HomeDetailState extends State<HomeDetail> {
 }
 
 class StreamerData extends StatelessWidget {
-  const StreamerData({Key key, this.month, this.year, this.idDocument});
+  const StreamerData(
+      {Key key, this.month, this.year, this.idDocument, this.nameMonth});
   final String idDocument;
   final String month;
+  final String nameMonth;
   final String year;
 
   @override
@@ -163,7 +166,9 @@ class StreamerData extends StatelessWidget {
           children: snapshot.data.docs.map((document) {
             return Container(
               child: ListDataView(
-                  document: document, idDocumentTransaction: idDocument),
+                  document: document,
+                  idDocumentTransaction: idDocument,
+                  nameMonth: nameMonth),
             );
           }).toList(),
         );
@@ -173,10 +178,11 @@ class StreamerData extends StatelessWidget {
 }
 
 class ListDataView extends StatelessWidget {
-  ListDataView({this.document, this.idDocumentTransaction});
+  ListDataView({this.document, this.idDocumentTransaction, this.nameMonth});
   final QueryDocumentSnapshot<Object> document;
   final firestoreInstance = FirebaseFirestore.instance;
   final String idDocumentTransaction;
+  final String nameMonth;
 
   @override
   Widget build(BuildContext context) {
@@ -224,7 +230,7 @@ class ListDataView extends StatelessWidget {
       child: Expanded(
           child: Padding(
         padding: EdgeInsets.only(
-          top: 20,
+          top: 10,
           left: 5,
           right: 5,
         ),
@@ -251,8 +257,62 @@ class ListDataView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(document['idDocument'].toString()),
-                Text(document['name'])
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(right: 5),
+                      child: Text(document['day'].toString(),
+                          style: TextStyle(
+                              fontSize: 35, fontWeight: FontWeight.bold)),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                            document['weekday'].toString() == '1'
+                                ? "Sunday"
+                                : document['weekday'].toString() == '2'
+                                    ? "Monday"
+                                    : document['weekday'].toString() == '3'
+                                        ? "Tuesday"
+                                        : document['weekday'].toString() == '4'
+                                            ? "Wednesday"
+                                            : document['weekday'].toString() ==
+                                                    '5'
+                                                ? "Thursday"
+                                                : document['weekday']
+                                                            .toString() ==
+                                                        '6'
+                                                    ? "Friday"
+                                                    : "Saturday",
+                            style: TextStyle(fontWeight: FontWeight.bold)),
+                        Text(nameMonth + " " + document['year']),
+                      ],
+                    ),
+                  ],
+                ),
+                Divider(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Inflow", style: TextStyle(color: Colors.green)),
+                        Text(" + Rp. " + document['inflow'].toString(),
+                            style: TextStyle(color: Colors.green)),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Outflow", style: TextStyle(color: Colors.red)),
+                        Text(" - Rp. " + document['outflow'].toString(),
+                            style: TextStyle(color: Colors.red)),
+                      ],
+                    ),
+                  ],
+                )
               ],
             ),
           ),

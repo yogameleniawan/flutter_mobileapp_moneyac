@@ -244,40 +244,9 @@ class _FormTransactionState extends State<FormTransaction> {
                       .snapshots()
                       .listen((DocumentSnapshot event) {
                     if (event.exists) {
-                      DocumentReference<Map<String, dynamic>> transactions =
-                          FirebaseFirestore.instance
-                              .collection("transaction")
-                              .doc(transactionId)
-                              .collection("transaction_detail")
-                              .doc(docId);
-                      String tempIdDocument = event.get("idDocument");
-                      int index = int.parse(tempIdDocument[0]);
-                      print(index);
-                      var data = {
-                        'idDocument': event.get("idDocument"),
-                        'name': event.get("name"),
-                        'uid': event.get("uid"),
-                        'inflow': event.get("inflow"),
-                        'outflow': event.get("outflow"),
-                        'year': event.get("year"),
-                        'month': event.get("month"),
-                        'day': event.get("day"),
-                        'transaction_id': event.get("transaction_id")
-                      };
-                      transactions
-                          .set(data)
-                          .then((value) =>
-                              print("Transaction with CustomID added"))
-                          .catchError((error) =>
-                              print("Failed to add transaction: $error"));
-                      docId = "";
-                    } else {
-                      DocumentReference<Map<String, dynamic>> transactions =
-                          FirebaseFirestore.instance
-                              .collection("transaction")
-                              .doc(transactionId)
-                              .collection("transaction_detail")
-                              .doc(docId);
+                      CollectionReference<Map<String, dynamic>> transactions =
+                          FirebaseFirestore.instance.collection(
+                              "transaction/$transactionId/transaction_detail/$docId/transaction_list");
                       var data = {
                         'idDocument': docId,
                         'name': nameController.text,
@@ -285,12 +254,60 @@ class _FormTransactionState extends State<FormTransaction> {
                         'inflow': inflow,
                         'outflow': outflow,
                         'year': selectedDate?.year.toString(),
+                        'weekday': selectedDate?.weekday.toString(),
                         'month': selectedDate?.month.toString(),
                         'day': selectedDate?.day.toString(),
                         'transaction_id': transactionId
                       };
                       transactions
-                          .set(data)
+                          .add(data)
+                          .then((value) =>
+                              print("Transaction with CustomID added"))
+                          .catchError((error) =>
+                              print("Failed to add transaction: $error"));
+                      docId = "";
+                    } else {
+                      DocumentReference<Map<String, dynamic>>
+                          transaction_detail = FirebaseFirestore.instance
+                              .collection("transaction")
+                              .doc(transactionId)
+                              .collection("transaction_detail")
+                              .doc(docId);
+                      var dataDetail = {
+                        'idDocument': docId,
+                        'uid': uid,
+                        'inflow': 0,
+                        'outflow': 0,
+                        'year': selectedDate?.year.toString(),
+                        'weekday': selectedDate?.weekday.toString(),
+                        'month': selectedDate?.month.toString(),
+                        'day': selectedDate?.day.toString(),
+                        'transaction_id': transactionId
+                      };
+                      transaction_detail
+                          .set(dataDetail)
+                          .then((value) =>
+                              print("Transaction with CustomID added"))
+                          .catchError((error) =>
+                              print("Failed to add transaction: $error"));
+
+                      CollectionReference<Map<String, dynamic>> transactions =
+                          FirebaseFirestore.instance.collection(
+                              "transaction/$transactionId/transaction_detail/$docId/transaction_list");
+                      var data = {
+                        'idDocument': docId,
+                        'name': nameController.text,
+                        'uid': uid,
+                        'inflow': inflow,
+                        'outflow': outflow,
+                        'year': selectedDate?.year.toString(),
+                        'weekday': selectedDate?.weekday.toString(),
+                        'month': selectedDate?.month.toString(),
+                        'day': selectedDate?.day.toString(),
+                        'transaction_id': transactionId
+                      };
+                      transactions
+                          .add(data)
                           .then((value) =>
                               print("Transaction with CustomID added"))
                           .catchError((error) =>
