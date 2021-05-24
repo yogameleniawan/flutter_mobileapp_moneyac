@@ -1,29 +1,28 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:mobileapp_moneyac/pages/home_list.dart';
 import 'package:mobileapp_moneyac/services/sign_in.dart';
 import 'form_transaction.dart';
 
-class HomeDetail extends StatefulWidget {
-  HomeDetail(
+class HomeList extends StatefulWidget {
+  HomeList(
       {Key key,
       this.idDocument,
-      this.month,
+      this.transactionId,
       this.year,
-      this.dataMonth,
+      this.month,
       this.nameUser})
       : super(key: key);
   String idDocument;
+  String transactionId;
   String month;
-  String dataMonth;
   String year;
   String nameUser;
 
   @override
-  _HomeDetailState createState() => _HomeDetailState();
+  _HomeListState createState() => _HomeListState();
 }
 
-class _HomeDetailState extends State<HomeDetail> {
+class _HomeListState extends State<HomeList> {
   String nameUser;
   @override
   Widget build(BuildContext context) {
@@ -89,26 +88,14 @@ class _HomeDetailState extends State<HomeDetail> {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 122, left: 14),
-                  child: Container(
-                    child: Text(
-                      widget.month + " " + widget.year,
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
               ],
             ),
             Expanded(
                 child: StreamerData(
-                    month: widget.dataMonth,
+                    month: widget.month,
                     year: widget.year,
                     idDocument: widget.idDocument,
-                    nameMonth: widget.month)),
+                    transactionId: widget.transactionId)),
           ],
         ),
       ),
@@ -122,7 +109,7 @@ class _HomeDetailState extends State<HomeDetail> {
                 MaterialPageRoute(
                   builder: (context) {
                     return FormTransaction(
-                        month: widget.dataMonth,
+                        month: widget.month,
                         year: widget.year,
                         nameUser: nameUser);
                   },
@@ -142,8 +129,14 @@ class _HomeDetailState extends State<HomeDetail> {
 
 class StreamerData extends StatelessWidget {
   const StreamerData(
-      {Key key, this.month, this.year, this.idDocument, this.nameMonth});
+      {Key key,
+      this.month,
+      this.year,
+      this.idDocument,
+      this.nameMonth,
+      this.transactionId});
   final String idDocument;
+  final String transactionId;
   final String month;
   final String nameMonth;
   final String year;
@@ -152,7 +145,8 @@ class StreamerData extends StatelessWidget {
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: FirebaseFirestore.instance
-          .collection('transaction/$idDocument/transaction_detail')
+          .collection(
+              'transaction/$transactionId/transaction_detail/$idDocument/transaction_list/')
           .where('month', isEqualTo: month)
           .where('year', isEqualTo: year)
           .where('uid', isEqualTo: uid)
@@ -165,11 +159,13 @@ class StreamerData extends StatelessWidget {
         }
         return ListView(
           children: snapshot.data.docs.map((document) {
+            String idDocumentList = document.id;
             return Container(
               child: ListDataView(
                   document: document,
                   idDocumentTransaction: idDocument,
-                  nameMonth: nameMonth),
+                  nameMonth: nameMonth,
+                  idDocumentList: idDocumentList),
             );
           }).toList(),
         );
@@ -179,17 +175,21 @@ class StreamerData extends StatelessWidget {
 }
 
 class ListDataView extends StatelessWidget {
-  ListDataView({this.document, this.idDocumentTransaction, this.nameMonth});
+  ListDataView(
+      {this.document,
+      this.idDocumentTransaction,
+      this.nameMonth,
+      this.idDocumentList});
   final QueryDocumentSnapshot<Object> document;
   final firestoreInstance = FirebaseFirestore.instance;
   final String idDocumentTransaction;
+  final String idDocumentList;
   final String nameMonth;
 
   @override
   Widget build(BuildContext context) {
-    String idTransactionDetail = document['idDocument'];
-    String transactionId = document['transaction_id'];
-    Future<void> _showMyDialog(String idDocument) async {
+    String idTransactionDetail = document['transaction_id'];
+    Future<void> _showMyDialog(String listId) async {
       return showDialog<void>(
         context: context,
         barrierDismissible: true,
@@ -208,12 +208,10 @@ class ListDataView extends StatelessWidget {
                 child: new Text('YES'),
                 onPressed: () async {
                   Navigator.of(context).pop();
-                  print(idDocumentTransaction + "idDocTransaction");
-                  print(idDocument + "idDoc");
                   await FirebaseFirestore.instance
                       .collection(
-                          'transaction/$idDocumentTransaction/transaction_detail')
-                      .doc(idDocument)
+                          'transaction/$idTransactionDetail/transaction_detail/$idDocumentTransaction/transaction_list')
+                      .doc(listId)
                       .delete();
                 },
               ),
@@ -260,84 +258,34 @@ class ListDataView extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 5),
-                      child: Text(document['day'].toString(),
-                          style: TextStyle(
-                              fontSize: 35, fontWeight: FontWeight.bold)),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                            document['weekday'].toString() == '1'
-                                ? "Sunday"
-                                : document['weekday'].toString() == '2'
-                                    ? "Monday"
-                                    : document['weekday'].toString() == '3'
-                                        ? "Tuesday"
-                                        : document['weekday'].toString() == '4'
-                                            ? "Wednesday"
-                                            : document['weekday'].toString() ==
-                                                    '5'
-                                                ? "Thursday"
-                                                : document['weekday']
-                                                            .toString() ==
-                                                        '6'
-                                                    ? "Friday"
-                                                    : "Saturday",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        Text(nameMonth + " " + document['year']),
-                      ],
-                    ),
-                  ],
-                ),
-                Divider(),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text("Inflow", style: TextStyle(color: Colors.green)),
-                        Text(" + Rp. " + document['inflow'].toString(),
-                            style: TextStyle(color: Colors.green)),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Outflow", style: TextStyle(color: Colors.red)),
-                        Text(" - Rp. " + document['outflow'].toString(),
-                            style: TextStyle(color: Colors.red)),
+                        Text(document['name'],
+                            style:
+                                TextStyle(color: Colors.black, fontSize: 16)),
+                        Text(
+                            document['inflow'] == 0
+                                ? " - Rp. " + document['inflow'].toString()
+                                : " + Rp. " + document['outflow'].toString(),
+                            style: document['inflow'] == 0
+                                ? TextStyle(color: Colors.red)
+                                : TextStyle(color: Colors.green)),
                       ],
                     ),
                   ],
                 ),
-                Divider(),
               ],
             ),
           ),
         ),
       )),
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) {
-              return HomeList(
-                idDocument: idTransactionDetail,
-                month: document['month'],
-                year: document['year'],
-                transactionId: transactionId,
-              );
-            },
-          ),
-        );
-      },
+      onTap: () {},
       onLongPress: () async {
-        _showMyDialog(document['idDocument'].toString());
+        _showMyDialog(idDocumentList);
       },
     );
   }
