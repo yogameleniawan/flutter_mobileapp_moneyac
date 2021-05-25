@@ -151,6 +151,8 @@ class StreamerData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int totalInflow = 0;
+    int totalOutflow = 0;
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('transaction/$idDocument/transaction_detail')
@@ -166,6 +168,23 @@ class StreamerData extends StatelessWidget {
         }
         return ListView(
           children: snapshot.data.docs.map((document) {
+            totalInflow = totalInflow + document['inflow'];
+            totalOutflow = totalOutflow + document['outflow'];
+
+            DocumentReference<Map<String, dynamic>> transaction_amount =
+                FirebaseFirestore.instance
+                    .collection("transaction")
+                    .doc(idDocument);
+            var data = {
+              'inflow': totalInflow,
+              'outflow': totalOutflow,
+            };
+            transaction_amount
+                .update(data)
+                .then((value) => print("Transaction with CustomID added"))
+                .catchError(
+                    (error) => print("Failed to add transaction: $error"));
+
             return Container(
               child: ListDataView(
                   document: document,
@@ -191,15 +210,6 @@ class ListDataView extends StatelessWidget {
   Widget build(BuildContext context) {
     String idTransactionDetail = document['idDocument'];
     String transactionId = document['transaction_id'];
-
-    void deleteData(String idDocumentTransaction, String idDocument) async {
-      final collectionRef = FirebaseFirestore.instance.collection(
-          "transaction/$idDocumentTransaction/transaction_detail/$idDocument/transaction_list");
-      final futureQuery = collectionRef.get();
-      await futureQuery.then((value) => value.docs.forEach((element) {
-            element.reference.delete();
-          }));
-    }
 
     Future<void> _showMyDialog(String idDocument) async {
       return showDialog<void>(
@@ -350,6 +360,29 @@ class ListDataView extends StatelessWidget {
                   ],
                 ),
                 Divider(),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("Total",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold)),
+                        Text(
+                            "Rp. " +
+                                formatCurrency.format(
+                                    document['inflow'] - document['outflow']),
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
