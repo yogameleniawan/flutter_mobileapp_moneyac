@@ -391,6 +391,38 @@ class ListDataView extends StatelessWidget {
                       .collection('transaction')
                       .doc(idDocument)
                       .delete();
+                  await FirebaseFirestore.instance
+                      .collection('transaction/$idDocument/transaction_detail')
+                      .get()
+                      .then((value) {
+                    value.docs.forEach((element) {
+                      FirebaseFirestore.instance
+                          .collection(
+                              'transaction/$idDocument/transaction_detail')
+                          .doc(element.id)
+                          .delete()
+                          .then((value) {
+                        print("Success!");
+                      });
+                      String idDetail = element.id;
+                      FirebaseFirestore.instance
+                          .collection(
+                              'transaction/$idDocument/transaction_detail/$idDetail/transaction_list')
+                          .get()
+                          .then((value) {
+                        value.docs.forEach((element) {
+                          FirebaseFirestore.instance
+                              .collection(
+                                  'transaction/$idDocument/transaction_detail/$idDetail/transaction_list')
+                              .doc(element.id)
+                              .delete()
+                              .then((value) {
+                            print("Success!");
+                          });
+                        });
+                      });
+                    });
+                  });
                 },
               ),
               new FlatButton(

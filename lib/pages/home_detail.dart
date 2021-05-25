@@ -227,6 +227,7 @@ class ListDataView extends StatelessWidget {
                           'transaction/$idDocumentTransaction/transaction_detail')
                       .doc(idDocument)
                       .delete();
+
                   await FirebaseFirestore.instance
                       .collection(
                           'transaction/$idDocumentTransaction/transaction_detail/$idDocument/transaction_list')
