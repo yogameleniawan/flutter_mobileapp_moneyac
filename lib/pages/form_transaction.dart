@@ -256,7 +256,7 @@ class _FormTransactionState extends State<FormTransaction> {
                         'year': selectedDate?.year.toString(),
                         'weekday': selectedDate?.weekday.toString(),
                         'month': selectedDate?.month.toString(),
-                        'day': selectedDate?.day.toString(),
+                        'day': selectedDate?.day,
                         'transaction_id': transactionId
                       };
                       transactions
@@ -316,7 +316,7 @@ class _FormTransactionState extends State<FormTransaction> {
                         'year': selectedDate?.year.toString(),
                         'weekday': selectedDate?.weekday.toString(),
                         'month': selectedDate?.month.toString(),
-                        'day': selectedDate?.day.toString(),
+                        'day': selectedDate?.day,
                         'transaction_id': transactionId
                       };
                       transaction_detail
@@ -338,7 +338,7 @@ class _FormTransactionState extends State<FormTransaction> {
                         'year': selectedDate?.year.toString(),
                         'weekday': selectedDate?.weekday.toString(),
                         'month': selectedDate?.month.toString(),
-                        'day': selectedDate?.day.toString(),
+                        'day': selectedDate?.day,
                         'transaction_id': transactionId
                       };
                       transactions

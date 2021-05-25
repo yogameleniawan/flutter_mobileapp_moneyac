@@ -16,7 +16,7 @@ class HomeList extends StatefulWidget {
       this.inflowDetail,
       this.outflowDetail})
       : super(key: key);
-  String day;
+  int day;
   String idDocument;
   String transactionId;
   String month;
@@ -97,7 +97,7 @@ class _HomeListState extends State<HomeList> {
                           style: TextStyle(color: Colors.white),
                         ),
                         Text(
-                          widget.day +
+                          widget.day.toString() +
                               " " +
                               (widget.month == "1"
                                   ? "January"

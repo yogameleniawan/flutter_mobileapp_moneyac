@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:mobileapp_moneyac/pages/home_list.dart';
 import 'package:mobileapp_moneyac/services/sign_in.dart';
 import 'form_transaction.dart';
@@ -184,11 +185,22 @@ class ListDataView extends StatelessWidget {
   final firestoreInstance = FirebaseFirestore.instance;
   final String idDocumentTransaction;
   final String nameMonth;
+  final formatCurrency = new NumberFormat.currency(locale: "en_US", symbol: "");
 
   @override
   Widget build(BuildContext context) {
     String idTransactionDetail = document['idDocument'];
     String transactionId = document['transaction_id'];
+
+    void deleteData(String idDocumentTransaction, String idDocument) async {
+      final collectionRef = FirebaseFirestore.instance.collection(
+          "transaction/$idDocumentTransaction/transaction_detail/$idDocument/transaction_list");
+      final futureQuery = collectionRef.get();
+      await futureQuery.then((value) => value.docs.forEach((element) {
+            element.reference.delete();
+          }));
+    }
+
     Future<void> _showMyDialog(String idDocument) async {
       return showDialog<void>(
         context: context,
@@ -215,6 +227,22 @@ class ListDataView extends StatelessWidget {
                           'transaction/$idDocumentTransaction/transaction_detail')
                       .doc(idDocument)
                       .delete();
+                  await FirebaseFirestore.instance
+                      .collection(
+                          'transaction/$idDocumentTransaction/transaction_detail/$idDocument/transaction_list')
+                      .get()
+                      .then((value) {
+                    value.docs.forEach((element) {
+                      FirebaseFirestore.instance
+                          .collection(
+                              'transaction/$idDocumentTransaction/transaction_detail/$idDocument/transaction_list')
+                          .doc(element.id)
+                          .delete()
+                          .then((value) {
+                        print("Success!");
+                      });
+                    });
+                  });
                 },
               ),
               new FlatButton(
@@ -302,7 +330,9 @@ class ListDataView extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text("Inflow", style: TextStyle(color: Colors.green)),
-                        Text(" + Rp. " + document['inflow'].toString(),
+                        Text(
+                            " + Rp. " +
+                                formatCurrency.format(document['inflow']),
                             style: TextStyle(color: Colors.green)),
                       ],
                     ),
@@ -310,7 +340,9 @@ class ListDataView extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text("Outflow", style: TextStyle(color: Colors.red)),
-                        Text(" - Rp. " + document['outflow'].toString(),
+                        Text(
+                            " - Rp. " +
+                                formatCurrency.format(document['outflow']),
                             style: TextStyle(color: Colors.red)),
                       ],
                     ),
