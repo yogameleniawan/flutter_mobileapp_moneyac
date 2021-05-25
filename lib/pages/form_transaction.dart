@@ -265,7 +265,8 @@ class _FormTransactionState extends State<FormTransaction> {
                               print("Transaction with CustomID added"))
                           .catchError((error) =>
                               print("Failed to add transaction: $error"));
-                      /////
+
+                      ///
                       DocumentReference<Map<String, dynamic>>
                           transaction_amount = FirebaseFirestore.instance
                               .collection("transaction")
@@ -299,7 +300,7 @@ class _FormTransactionState extends State<FormTransaction> {
                             .catchError((error) =>
                                 print("Failed to add transaction: $error"));
                       }
-                      ////////////////
+                      //////////////
                       docId = "";
                     } else {
                       DocumentReference<Map<String, dynamic>>

@@ -156,9 +156,7 @@ class StreamerData extends StatelessWidget {
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('transaction/$idDocument/transaction_detail')
-          .where('month', isEqualTo: month)
-          .where('year', isEqualTo: year)
-          .where('uid', isEqualTo: uid)
+          .orderBy('day', descending: false)
           .snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) {
