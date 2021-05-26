@@ -26,8 +26,27 @@ class HomeDetail extends StatefulWidget {
 
 class _HomeDetailState extends State<HomeDetail> {
   String nameUser;
+  String hasil;
   @override
   Widget build(BuildContext context) {
+    void _navigateAndDisplaySelection(BuildContext context) async {
+      // Navigator.push returns a Future that completes after calling
+      // Navigator.pop on the Selection Screen.
+      final result = await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) {
+            return FormTransaction(
+                month: widget.dataMonth, year: widget.year, nameUser: nameUser);
+          },
+        ),
+      );
+      // After the Selection Screen returns a result, hide any previous snackbars
+      // and show the new result.
+      // ScaffoldMessenger.of(context)
+      //   ..removeCurrentSnackBar()
+      //   ..showSnackBar(SnackBar(content: Text('$result')));
+    }
+
     return Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       body: Container(
@@ -106,10 +125,11 @@ class _HomeDetailState extends State<HomeDetail> {
             ),
             Expanded(
                 child: StreamerData(
-                    month: widget.dataMonth,
-                    year: widget.year,
-                    idDocument: widget.idDocument,
-                    nameMonth: widget.month)),
+              month: widget.dataMonth,
+              year: widget.year,
+              idDocument: widget.idDocument,
+              nameMonth: widget.month,
+            )),
           ],
         ),
       ),
@@ -119,16 +139,7 @@ class _HomeDetailState extends State<HomeDetail> {
         child: FittedBox(
           child: FloatingActionButton(
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) {
-                    return FormTransaction(
-                        month: widget.dataMonth,
-                        year: widget.year,
-                        nameUser: nameUser);
-                  },
-                ),
-              );
+              _navigateAndDisplaySelection(context);
             },
             child: Icon(
               Icons.add,
@@ -142,17 +153,23 @@ class _HomeDetailState extends State<HomeDetail> {
 }
 
 class StreamerData extends StatelessWidget {
-  const StreamerData(
-      {Key key, this.month, this.year, this.idDocument, this.nameMonth});
+  StreamerData({
+    Key key,
+    this.month,
+    this.year,
+    this.idDocument,
+    this.nameMonth,
+  });
   final String idDocument;
   final String month;
   final String nameMonth;
   final String year;
-
+  int totalInflow = 0;
+  int totalOutflow = 0;
   @override
   Widget build(BuildContext context) {
-    int totalInflow = 0;
-    int totalOutflow = 0;
+    int i = 0;
+    int iTemp = 0;
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('transaction/$idDocument/transaction_detail')
@@ -166,22 +183,48 @@ class StreamerData extends StatelessWidget {
         }
         return ListView(
           children: snapshot.data.docs.map((document) {
-            totalInflow = totalInflow + document['inflow'];
-            totalOutflow = totalOutflow + document['outflow'];
-
-            DocumentReference<Map<String, dynamic>> transaction_amount =
-                FirebaseFirestore.instance
-                    .collection("transaction")
-                    .doc(idDocument);
-            var data = {
-              'inflow': totalInflow,
-              'outflow': totalOutflow,
-            };
-            transaction_amount
-                .update(data)
-                .then((value) => print("Transaction with CustomID added"))
-                .catchError(
-                    (error) => print("Failed to add transaction: $error"));
+            var index = snapshot.data.docs.indexOf(document);
+            var course = snapshot.data.size;
+            i++;
+            print(i);
+            print(course);
+            if (i == course) {
+              totalInflow = totalInflow + document['inflow'];
+              totalOutflow = totalOutflow + document['outflow'];
+              DocumentReference<Map<String, dynamic>> transaction_amount =
+                  FirebaseFirestore.instance
+                      .collection("transaction")
+                      .doc(idDocument);
+              var data = {
+                'inflow': totalInflow,
+                'outflow': totalOutflow,
+              };
+              transaction_amount
+                  .update(data)
+                  .then((value) => print("Transaction with CustomID added"))
+                  .catchError(
+                      (error) => print("Failed to add transaction: $error"));
+              totalInflow = 0;
+              totalOutflow = 0;
+              i = 0;
+              print("terakhir");
+            } else {
+              totalInflow = totalInflow + document['inflow'];
+              totalOutflow = totalOutflow + document['outflow'];
+              DocumentReference<Map<String, dynamic>> transaction_amount =
+                  FirebaseFirestore.instance
+                      .collection("transaction")
+                      .doc(idDocument);
+              var data = {
+                'inflow': totalInflow,
+                'outflow': totalOutflow,
+              };
+              transaction_amount
+                  .update(data)
+                  .then((value) => print("Transaction with CustomID added"))
+                  .catchError(
+                      (error) => print("Failed to add transaction: $error"));
+            }
 
             return Container(
               child: ListDataView(

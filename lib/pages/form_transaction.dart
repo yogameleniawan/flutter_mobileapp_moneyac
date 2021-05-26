@@ -225,6 +225,8 @@ class _FormTransactionState extends State<FormTransaction> {
                       ],
                     ))),
                 onTap: () {
+                  int inflowTransaction;
+                  int outflowTransaction;
                   if (widget.nameUser.contains(" ")) {
                     widget.nameUser = widget.nameUser
                         .substring(0, widget.nameUser.indexOf(" "));
@@ -277,6 +279,8 @@ class _FormTransactionState extends State<FormTransaction> {
                       int inflowTotal = inflow + inflowDetail;
                       int outflowDetail = event.get('outflow');
                       int outflowTotal = outflow + outflowDetail;
+                      inflowTransaction = inflowTotal;
+                      outflowTransaction = outflowTotal;
                       if (selectedType == "Inflow") {
                         var dataInflow = {
                           'inflow': inflowTotal,
@@ -348,11 +352,11 @@ class _FormTransactionState extends State<FormTransaction> {
                               print("Transaction with CustomID added"))
                           .catchError((error) =>
                               print("Failed to add transaction: $error"));
-
                       docId = "";
                     }
                   });
-                  Navigator.pop(context);
+
+                  Navigator.pop(context, 'Added');
                 }),
           ],
         ),
