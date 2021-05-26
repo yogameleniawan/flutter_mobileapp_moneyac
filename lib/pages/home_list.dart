@@ -140,12 +140,11 @@ class _HomeListState extends State<HomeList> {
             ),
             Expanded(
                 child: StreamerData(
-                    month: widget.month,
-                    year: widget.year,
-                    idDocument: widget.idDocument,
-                    transactionId: widget.transactionId,
-                    inflowDetail: widget.inflowDetail,
-                    outflowDetail: widget.outflowDetail)),
+              month: widget.month,
+              year: widget.year,
+              idDocument: widget.idDocument,
+              transactionId: widget.transactionId,
+            )),
           ],
         ),
       ),
@@ -178,27 +177,25 @@ class _HomeListState extends State<HomeList> {
 }
 
 class StreamerData extends StatelessWidget {
-  const StreamerData(
-      {Key key,
-      this.month,
-      this.year,
-      this.idDocument,
-      this.nameMonth,
-      this.transactionId,
-      this.inflowDetail,
-      this.outflowDetail});
+  StreamerData({
+    Key key,
+    this.month,
+    this.year,
+    this.idDocument,
+    this.nameMonth,
+    this.transactionId,
+  });
   final String idDocument;
   final String transactionId;
   final String month;
   final String nameMonth;
   final String year;
-  final int inflowDetail;
-  final int outflowDetail;
+  int totalInflow = 0;
+  int totalOutflow = 0;
 
   @override
   Widget build(BuildContext context) {
-    int totalInflow = 0;
-    int totalOutflow = 0;
+    int i = 0;
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection(
@@ -218,29 +215,50 @@ class StreamerData extends StatelessWidget {
             String idDocumentList = document.id;
             totalInflow = totalInflow + document['inflow'];
             totalOutflow = totalOutflow + document['outflow'];
+            var course = snapshot.data.size;
+            i++;
+            if (i == course) {
+              DocumentReference<Map<String, dynamic>> transaction_amount =
+                  FirebaseFirestore.instance
+                      .collection(
+                          "transaction/$transactionId/transaction_detail/")
+                      .doc(idDocument);
+              var data = {
+                'inflow': totalInflow,
+                'outflow': totalOutflow,
+              };
+              transaction_amount
+                  .update(data)
+                  .then((value) => print("Transaction with CustomID added"))
+                  .catchError(
+                      (error) => print("Failed to add transaction: $error"));
+              totalInflow = 0;
+              totalOutflow = 0;
+              i = 0;
+            } else {
+              DocumentReference<Map<String, dynamic>> transaction_amount =
+                  FirebaseFirestore.instance
+                      .collection(
+                          "transaction/$transactionId/transaction_detail/")
+                      .doc(idDocument);
+              var data = {
+                'inflow': totalInflow,
+                'outflow': totalOutflow,
+              };
+              transaction_amount
+                  .update(data)
+                  .then((value) => print("Transaction with CustomID added"))
+                  .catchError(
+                      (error) => print("Failed to add transaction: $error"));
+            }
 
-            // DocumentReference<Map<String, dynamic>> transaction_amount =
-            //     FirebaseFirestore.instance
-            //         .collection(
-            //             "transaction/$transactionId/transaction_detail/")
-            //         .doc(idDocument);
-            // var data = {
-            //   'inflow': totalInflow,
-            //   'outflow': totalOutflow,
-            // };
-            // transaction_amount
-            //     .update(data)
-            //     .then((value) => print("Transaction with CustomID added"))
-            //     .catchError(
-            //         (error) => print("Failed to add transaction: $error"));
             return Container(
               child: ListDataView(
-                  document: document,
-                  idDocumentTransaction: idDocument,
-                  nameMonth: nameMonth,
-                  idDocumentList: idDocumentList,
-                  inflowDetail: inflowDetail,
-                  outflowDetail: outflowDetail),
+                document: document,
+                idDocumentTransaction: idDocument,
+                nameMonth: nameMonth,
+                idDocumentList: idDocumentList,
+              ),
             );
           }).toList(),
         );

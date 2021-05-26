@@ -169,7 +169,6 @@ class StreamerData extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int i = 0;
-    int iTemp = 0;
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('transaction/$idDocument/transaction_detail')
@@ -183,11 +182,8 @@ class StreamerData extends StatelessWidget {
         }
         return ListView(
           children: snapshot.data.docs.map((document) {
-            var index = snapshot.data.docs.indexOf(document);
             var course = snapshot.data.size;
             i++;
-            print(i);
-            print(course);
             if (i == course) {
               totalInflow = totalInflow + document['inflow'];
               totalOutflow = totalOutflow + document['outflow'];
@@ -207,7 +203,6 @@ class StreamerData extends StatelessWidget {
               totalInflow = 0;
               totalOutflow = 0;
               i = 0;
-              print("terakhir");
             } else {
               totalInflow = totalInflow + document['inflow'];
               totalOutflow = totalOutflow + document['outflow'];
