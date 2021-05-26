@@ -29,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
       "https://www.pngkit.com/png/full/281-2812821_user-account-management-logo-user-icon-png.png";
   User user;
   int _currentIndex = 0;
-  int total = 0;
+  int total;
   DateTime initialDate = DateTime.now();
   DateTime selectedDate;
   String docId = "";
@@ -86,6 +86,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         children:
                                             snapshot.data.docs.map((document) {
                                           nameUser = document['name'];
+                                          total = document['totalAmount'];
                                           return Text(document['name']);
                                         }).toList(),
                                       );
@@ -123,19 +124,19 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             Padding(
                               padding:
-                                  const EdgeInsets.only(top: 30, left: 160.0),
+                                  const EdgeInsets.only(top: 25, left: 160.0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Total Amount",
+                                    "Insight Your Money with",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 16,
                                     ),
                                   ),
                                   Text(
-                                    "Rp. " + total.toString(),
+                                    "Moneyac App ",
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 18,
@@ -334,8 +335,7 @@ class StreamerData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    FirebaseFirestore firestrore = FirebaseFirestore.instance;
-    CollectionReference transaction = firestrore.collection('transaction');
+    int totalAmount = 0;
     return StreamBuilder(
       stream: FirebaseFirestore.instance
           .collection('transaction')
