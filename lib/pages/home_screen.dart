@@ -129,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Insight Your Money with",
+                                    "Insight Your Finance with",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 16,
@@ -537,11 +537,9 @@ class ListDataView extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Inflow"),
-                    Text(
-                      "Rp. " + formatCurrency.format(document['inflow']),
-                      style: TextStyle(color: Colors.blue),
-                    )
+                    Text("Inflow", style: TextStyle(color: Colors.black)),
+                    Text("Rp. " + formatCurrency.format(document['inflow']),
+                        style: TextStyle(color: Colors.black)),
                   ],
                 ),
                 Padding(
@@ -549,14 +547,13 @@ class ListDataView extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Outflow"),
-                      Text(
-                        "Rp. " + formatCurrency.format(document['outflow']),
-                        style: TextStyle(color: Colors.red),
-                      ),
+                      Text("Outflow", style: TextStyle(color: Colors.black)),
+                      Text("Rp. " + formatCurrency.format(document['outflow']),
+                          style: TextStyle(color: Colors.black)),
                     ],
                   ),
                 ),
+                Divider(),
                 Padding(
                   padding: const EdgeInsets.only(top: 5),
                   child: Row(
@@ -571,8 +568,15 @@ class ListDataView extends StatelessWidget {
                         "Rp. " +
                             formatCurrency.format(
                                 document['inflow'] - document['outflow']),
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                        style: (document['inflow'] - document['outflow']) < 0
+                            ? TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red)
+                            : TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.green),
                       ),
                     ],
                   ),

@@ -221,6 +221,10 @@ class StreamerData extends StatelessWidget {
                       (error) => print("Failed to add transaction: $error"));
             }
 
+            if (document['inflow'] == null) {
+              print("kosong");
+            }
+
             return Container(
               child: ListDataView(
                   document: document,
@@ -266,8 +270,6 @@ class ListDataView extends StatelessWidget {
                 child: new Text('YES'),
                 onPressed: () async {
                   Navigator.of(context).pop();
-                  print(idDocumentTransaction + "idDocTransaction");
-                  print(idDocument + "idDoc");
                   await FirebaseFirestore.instance
                       .collection(
                           'transaction/$idDocumentTransaction/transaction_detail')

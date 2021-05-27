@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:mobileapp_moneyac/pages/edit_transaction.dart';
 import 'package:mobileapp_moneyac/services/sign_in.dart';
 import 'form_transaction.dart';
 
@@ -371,7 +372,10 @@ class ListDataView extends StatelessWidget {
                                 color: document['outflow'] == 0
                                     ? Colors.green
                                     : Colors.red),
-                            Text(" " + document['name'],
+                            Text(
+                                document['outflow'] == 0
+                                    ? " Inflow"
+                                    : " Outflow",
                                 style: TextStyle(
                                     color: Colors.black, fontSize: 16)),
                           ],
@@ -387,6 +391,13 @@ class ListDataView extends StatelessWidget {
                                 : TextStyle(color: Colors.green)),
                       ],
                     ),
+                    Divider(),
+                    Text(
+                      "Transaction Name :",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Text(document['name'],
+                        style: TextStyle(color: Colors.black54))
                   ],
                 ),
               ],
@@ -394,7 +405,23 @@ class ListDataView extends StatelessWidget {
           ),
         ),
       )),
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) {
+              return EditTransaction(
+                  idDocumentList: idDocumentList,
+                  nameList: document['name'],
+                  amount: document['inflow'] != 0
+                      ? document['inflow']
+                      : document['outflow'],
+                  selectedItem: document['inflow'] != 0 ? "Inflow" : "Outflow",
+                  idDocumentDetail: document['idDocument'],
+                  idDocumentTransaction: document['transaction_id']);
+            },
+          ),
+        );
+      },
       onLongPress: () async {
         _showMyDialog(idDocumentList);
       },
