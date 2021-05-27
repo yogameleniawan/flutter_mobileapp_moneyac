@@ -30,8 +30,6 @@ class _HomeDetailState extends State<HomeDetail> {
   @override
   Widget build(BuildContext context) {
     void _navigateAndDisplaySelection(BuildContext context) async {
-      // Navigator.push returns a Future that completes after calling
-      // Navigator.pop on the Selection Screen.
       final result = await Navigator.of(context).push(
         MaterialPageRoute(
           builder: (context) {
@@ -40,11 +38,6 @@ class _HomeDetailState extends State<HomeDetail> {
           },
         ),
       );
-      // After the Selection Screen returns a result, hide any previous snackbars
-      // and show the new result.
-      // ScaffoldMessenger.of(context)
-      //   ..removeCurrentSnackBar()
-      //   ..showSnackBar(SnackBar(content: Text('$result')));
     }
 
     return Scaffold(

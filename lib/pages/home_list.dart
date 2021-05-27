@@ -397,7 +397,7 @@ class ListDataView extends StatelessWidget {
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                     Text(document['name'],
-                        style: TextStyle(color: Colors.black54))
+                        style: TextStyle(color: Colors.black54, fontSize: 16))
                   ],
                 ),
               ],

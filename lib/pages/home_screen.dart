@@ -54,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 length: 12,
                 child: SafeArea(
                   child: Container(
-                    margin: EdgeInsets.only(top: 40, left: 15, right: 15),
+                    margin: EdgeInsets.only(top: 20, left: 15, right: 15),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -537,9 +537,9 @@ class ListDataView extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Inflow", style: TextStyle(color: Colors.black)),
+                    Text("Inflow", style: TextStyle(color: Colors.green)),
                     Text("Rp. " + formatCurrency.format(document['inflow']),
-                        style: TextStyle(color: Colors.black)),
+                        style: TextStyle(color: Colors.green)),
                   ],
                 ),
                 Padding(
@@ -547,9 +547,9 @@ class ListDataView extends StatelessWidget {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text("Outflow", style: TextStyle(color: Colors.black)),
+                      Text("Outflow", style: TextStyle(color: Colors.red)),
                       Text("Rp. " + formatCurrency.format(document['outflow']),
-                          style: TextStyle(color: Colors.black)),
+                          style: TextStyle(color: Colors.red)),
                     ],
                   ),
                 ),
