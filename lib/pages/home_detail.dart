@@ -356,7 +356,7 @@ class ListDataView extends StatelessWidget {
                                                 : document['weekday']
                                                             .toString() ==
                                                         '5'
-                                                    ? "Friday"
+                                                    ? "Friday "
                                                     : "Saturday",
                             style: TextStyle(fontWeight: FontWeight.bold)),
                         Text(nameMonth + " " + document['year']),
