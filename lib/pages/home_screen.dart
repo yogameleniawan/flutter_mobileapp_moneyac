@@ -257,7 +257,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 if (nameUser.contains(" ")) {
                   nameUser = nameUser.substring(0, nameUser.indexOf(" "));
                 }
-                docId = nameUser +
+                docId = uid +
                     selectedDate?.month.toString() +
                     selectedDate?.year.toString();
                 FirebaseFirestore.instance

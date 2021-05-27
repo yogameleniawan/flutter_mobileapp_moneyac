@@ -231,11 +231,11 @@ class _FormTransactionState extends State<FormTransaction> {
                     widget.nameUser = widget.nameUser
                         .substring(0, widget.nameUser.indexOf(" "));
                   }
-                  docId = widget.nameUser +
+                  docId = uid +
                       selectedDate?.day.toString() +
                       selectedDate?.month.toString() +
                       selectedDate?.year.toString();
-                  transactionId = widget.nameUser +
+                  transactionId = uid +
                       selectedDate?.month.toString() +
                       selectedDate?.year.toString();
                   FirebaseFirestore.instance
