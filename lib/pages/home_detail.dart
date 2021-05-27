@@ -342,20 +342,20 @@ class ListDataView extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                            document['weekday'].toString() == '1'
+                            document['weekday'].toString() == '7'
                                 ? "Sunday"
-                                : document['weekday'].toString() == '2'
+                                : document['weekday'].toString() == '1'
                                     ? "Monday"
-                                    : document['weekday'].toString() == '3'
+                                    : document['weekday'].toString() == '2'
                                         ? "Tuesday"
-                                        : document['weekday'].toString() == '4'
+                                        : document['weekday'].toString() == '3'
                                             ? "Wednesday"
                                             : document['weekday'].toString() ==
-                                                    '5'
+                                                    '4'
                                                 ? "Thursday"
                                                 : document['weekday']
                                                             .toString() ==
-                                                        '6'
+                                                        '5'
                                                     ? "Friday"
                                                     : "Saturday",
                             style: TextStyle(fontWeight: FontWeight.bold)),
