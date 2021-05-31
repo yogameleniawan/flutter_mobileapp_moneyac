@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:mobileapp_moneyac/pages/home_detail.dart';
 import 'package:mobileapp_moneyac/pages/profile_page.dart';
+import 'package:mobileapp_moneyac/services/database.dart';
 import 'package:mobileapp_moneyac/services/sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:intl/intl.dart';
@@ -252,9 +253,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     selectedDate = date;
                   });
                 }
-                if (nameUser.contains(" ")) {
-                  nameUser = nameUser.substring(0, nameUser.indexOf(" "));
-                }
                 docId = uid +
                     selectedDate?.month.toString() +
                     selectedDate?.year.toString();
@@ -262,48 +260,26 @@ class _HomeScreenState extends State<HomeScreen> {
                     .collection("transaction")
                     .doc(docId)
                     .snapshots()
-                    .listen((DocumentSnapshot event) {
+                    .listen((DocumentSnapshot event) async {
                   if (event.exists) {
-                    DocumentReference<Map<String, dynamic>> transactions =
-                        FirebaseFirestore.instance
-                            .collection('/transaction')
-                            .doc(docId);
-                    var data = {
-                      'idDocument': event.get("idDocument"),
-                      'uid': event.get("uid"),
-                      'inflow': event.get("inflow"),
-                      'outflow': event.get("outflow"),
-                      'year': event.get("year"),
-                      'month': event.get("month"),
-                      'total': event.get("total"),
-                    };
-                    transactions
-                        .set(data)
-                        .then(
-                            (value) => print("Transaction with CustomID added"))
-                        .catchError((error) =>
-                            print("Failed to add transaction: $error"));
+                    await Database.updateTransaction(
+                        docId: docId,
+                        idDocument: event.get("idDocument"),
+                        uid: event.get("uid"),
+                        inflow: event.get("inflow"),
+                        outflow: event.get("outflow"),
+                        year: event.get("year"),
+                        month: event.get("month"));
                     docId = "";
                   } else {
-                    DocumentReference<Map<String, dynamic>> transactions =
-                        FirebaseFirestore.instance
-                            .collection('/transaction')
-                            .doc(docId);
-                    var data = {
-                      'idDocument': docId,
-                      'uid': uid,
-                      'inflow': 0,
-                      'outflow': 0,
-                      'year': selectedDate?.year.toString(),
-                      'month': selectedDate?.month.toString(),
-                      'total': 0,
-                    };
-                    transactions
-                        .set(data)
-                        .then(
-                            (value) => print("Transaction with CustomID added"))
-                        .catchError((error) =>
-                            print("Failed to add transaction: $error"));
+                    await Database.updateTransaction(
+                        docId: docId,
+                        idDocument: docId,
+                        uid: uid,
+                        inflow: 0,
+                        outflow: 0,
+                        year: selectedDate?.year.toString(),
+                        month: selectedDate?.month.toString());
                     docId = "";
                   }
                 });
@@ -333,13 +309,8 @@ class StreamerData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int totalAmount = 0;
     return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection('transaction')
-          .where('month', isEqualTo: month)
-          .where('uid', isEqualTo: uid)
-          .snapshots(),
+      stream: Database.readTransaction(month: month, uid: uid),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) {
           return Center(
@@ -385,42 +356,9 @@ class ListDataView extends StatelessWidget {
                 child: new Text('YES'),
                 onPressed: () async {
                   Navigator.of(context).pop();
-                  await FirebaseFirestore.instance
-                      .collection('transaction')
-                      .doc(idDocument)
-                      .delete();
-                  await FirebaseFirestore.instance
-                      .collection('transaction/$idDocument/transaction_detail')
-                      .get()
-                      .then((value) {
-                    value.docs.forEach((element) {
-                      FirebaseFirestore.instance
-                          .collection(
-                              'transaction/$idDocument/transaction_detail')
-                          .doc(element.id)
-                          .delete()
-                          .then((value) {
-                        print("Success!");
-                      });
-                      String idDetail = element.id;
-                      FirebaseFirestore.instance
-                          .collection(
-                              'transaction/$idDocument/transaction_detail/$idDetail/transaction_list')
-                          .get()
-                          .then((value) {
-                        value.docs.forEach((element) {
-                          FirebaseFirestore.instance
-                              .collection(
-                                  'transaction/$idDocument/transaction_detail/$idDetail/transaction_list')
-                              .doc(element.id)
-                              .delete()
-                              .then((value) {
-                            print("Success!");
-                          });
-                        });
-                      });
-                    });
-                  });
+                  await Database.deleteTransaction(idDocument: idDocument);
+                  await Database.deleteAllTransactionDetail(
+                      idDocument: idDocument);
                 },
               ),
               new FlatButton(
@@ -566,15 +504,20 @@ class ListDataView extends StatelessWidget {
                         "Rp. " +
                             formatCurrency.format(
                                 document['inflow'] - document['outflow']),
-                        style: (document['inflow'] - document['outflow']) < 0
+                        style: (document['inflow'] - document['outflow']) == 0
                             ? TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.red)
-                            : TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green),
+                                color: Colors.black)
+                            : document['inflow'] - document['outflow'] < 0
+                                ? TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red)
+                                : TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green),
                       ),
                     ],
                   ),

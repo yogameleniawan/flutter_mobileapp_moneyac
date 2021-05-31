@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:mobileapp_moneyac/models/users.dart';
 import 'package:mobileapp_moneyac/services/sign_in.dart';
 
 import 'login_page.dart';
