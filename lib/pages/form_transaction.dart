@@ -225,7 +225,7 @@ class _FormTransactionState extends State<FormTransaction> {
                         ),
                       ],
                     ))),
-                onTap: () async {
+                onTap: () {
                   docId = uid +
                       selectedDate?.day.toString() +
                       selectedDate?.month.toString() +
@@ -239,9 +239,9 @@ class _FormTransactionState extends State<FormTransaction> {
                       .collection("transaction_detail")
                       .doc(docId)
                       .snapshots()
-                      .listen((DocumentSnapshot event) async {
+                      .listen((DocumentSnapshot event) {
                     if (event.exists) {
-                      await Database.addTransactionList(
+                      Database.addTransactionList(
                           transactionId: transactionId,
                           docId: docId,
                           name: nameController.text,
@@ -253,7 +253,7 @@ class _FormTransactionState extends State<FormTransaction> {
                           weekday: selectedDate?.weekday.toString(),
                           day: int.parse(selectedDate?.day.toString()));
 
-                      await Database.updateTransactionDetail(
+                      Database.updateTransactionDetail(
                           transactionId: transactionId,
                           docId: docId,
                           name: nameController.text,
@@ -270,7 +270,7 @@ class _FormTransactionState extends State<FormTransaction> {
 
                       docId = "";
                     } else {
-                      await Database.addTransactionDetail(
+                      Database.addTransactionDetail(
                           transactionId: transactionId,
                           docId: docId,
                           name: nameController.text,
@@ -283,7 +283,7 @@ class _FormTransactionState extends State<FormTransaction> {
                           day: int.parse(selectedDate?.day.toString()),
                           selectedType: selectedType);
 
-                      await Database.addTransactionList(
+                      Database.addTransactionList(
                           transactionId: transactionId,
                           docId: docId,
                           name: nameController.text,
