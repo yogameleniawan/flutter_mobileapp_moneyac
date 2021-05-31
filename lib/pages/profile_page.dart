@@ -112,24 +112,30 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 15.0, right: 14, left: 14),
-            child: TextFormField(
-              enabled: false,
-              style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15),
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
+          widget.email != null
+              ? Padding(
+                  padding:
+                      const EdgeInsets.only(top: 15.0, right: 14, left: 14),
+                  child: TextFormField(
+                    enabled: false,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      ),
+                      hintText: "•••••••",
+                      hintStyle: TextStyle(fontSize: 15),
+                      contentPadding:
+                          EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                    ),
+                  ),
+                )
+              : SizedBox(
+                  height: 10,
                 ),
-                hintText: "•••••••",
-                hintStyle: TextStyle(fontSize: 15),
-                contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-              ),
-            ),
-          ),
           Padding(
             padding: const EdgeInsets.only(top: 30),
             child: RaisedButton(

@@ -17,22 +17,30 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController nameController = TextEditingController();
 
   @override
+  void initState() {
+    // TODO: implement initState
+    errorMessageRegister = "";
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       // resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: const Color(0xff26c165),
-        title: Text("Sign Up Email"),
-      ),
       body: Container(
-        color: Colors.white,
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage("assets/register.png"), fit: BoxFit.cover)),
+        // color: Colors.white,
         child: Center(
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Image(image: AssetImage("assets/logo1.png"), height: 125.0),
+                SizedBox(
+                  height: 185,
+                ),
                 Container(
                   child: Form(
                     child: Padding(
@@ -44,7 +52,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: Column(
                           children: <Widget>[
                             Padding(
-                              padding: const EdgeInsets.all(15.0),
+                              padding: const EdgeInsets.only(
+                                  top: 15.0, left: 15, right: 15, bottom: 5),
                               child: Text(
                                 "Register",
                                 style: TextStyle(
@@ -218,15 +227,29 @@ class _RegisterPageState extends State<RegisterPage> {
                                     }
                                   });
                                 }),
-                            SizedBox(
-                              height: 16,
-                            ),
                             Text(error),
                           ],
                         ),
                       ),
                     ),
                   ),
+                ),
+                MaterialButton(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Already have an account?",
+                          style: TextStyle(color: Colors.white)),
+                      Text(
+                        " SIGN IN",
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    errorMessageRegister = "";
+                  },
                 ),
               ],
             ),

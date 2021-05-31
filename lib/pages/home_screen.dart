@@ -85,8 +85,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                       return Column(
                                         children:
                                             snapshot.data.docs.map((document) {
-                                          nameUser = document['name'];
-                                          total = document['totalAmount'];
                                           return Text(document['name']);
                                         }).toList(),
                                       );
