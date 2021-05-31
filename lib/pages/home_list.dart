@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobileapp_moneyac/pages/edit_transaction.dart';
+import 'package:mobileapp_moneyac/services/database.dart';
 import 'package:mobileapp_moneyac/services/sign_in.dart';
 import 'form_transaction.dart';
 
@@ -198,13 +199,12 @@ class StreamerData extends StatelessWidget {
   Widget build(BuildContext context) {
     int i = 0;
     return StreamBuilder(
-      stream: FirebaseFirestore.instance
-          .collection(
-              'transaction/$transactionId/transaction_detail/$idDocument/transaction_list/')
-          .where('month', isEqualTo: month)
-          .where('year', isEqualTo: year)
-          .where('uid', isEqualTo: uid)
-          .snapshots(),
+      stream: Database.readTransactionList(
+          transactionId: transactionId,
+          idDocument: idDocument,
+          month: month,
+          year: year,
+          uid: uid),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (!snapshot.hasData) {
           return Center(

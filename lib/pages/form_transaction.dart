@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:mobileapp_moneyac/services/database.dart';
 import 'package:mobileapp_moneyac/services/sign_in.dart';
 import 'package:date_utils/date_utils.dart';
 
@@ -224,13 +225,7 @@ class _FormTransactionState extends State<FormTransaction> {
                         ),
                       ],
                     ))),
-                onTap: () {
-                  int inflowTransaction;
-                  int outflowTransaction;
-                  if (widget.nameUser.contains(" ")) {
-                    widget.nameUser = widget.nameUser
-                        .substring(0, widget.nameUser.indexOf(" "));
-                  }
+                onTap: () async {
                   docId = uid +
                       selectedDate?.day.toString() +
                       selectedDate?.month.toString() +
@@ -244,119 +239,66 @@ class _FormTransactionState extends State<FormTransaction> {
                       .collection("transaction_detail")
                       .doc(docId)
                       .snapshots()
-                      .listen((DocumentSnapshot event) {
+                      .listen((DocumentSnapshot event) async {
                     if (event.exists) {
-                      CollectionReference<Map<String, dynamic>> transactions =
-                          FirebaseFirestore.instance.collection(
-                              "transaction/$transactionId/transaction_detail/$docId/transaction_list");
-                      var data = {
-                        'idDocument': docId,
-                        'name': nameController.text,
-                        'uid': uid,
-                        'inflow': inflow,
-                        'outflow': outflow,
-                        'year': selectedDate?.year.toString(),
-                        'weekday': selectedDate?.weekday.toString(),
-                        'month': selectedDate?.month.toString(),
-                        'day': selectedDate?.day,
-                        'transaction_id': transactionId
-                      };
-                      transactions
-                          .add(data)
-                          .then((value) =>
-                              print("Transaction with CustomID added"))
-                          .catchError((error) =>
-                              print("Failed to add transaction: $error"));
+                      await Database.addTransactionList(
+                          transactionId: transactionId,
+                          docId: docId,
+                          name: nameController.text,
+                          uid: uid,
+                          inflow: inflow,
+                          outflow: outflow,
+                          year: selectedDate?.year.toString(),
+                          month: selectedDate?.month.toString(),
+                          weekday: selectedDate?.weekday.toString(),
+                          day: int.parse(selectedDate?.day.toString()));
 
-                      ///
-                      DocumentReference<Map<String, dynamic>>
-                          transaction_amount = FirebaseFirestore.instance
-                              .collection("transaction")
-                              .doc(transactionId)
-                              .collection("transaction_detail")
-                              .doc(docId);
-                      int inflowDetail = event.get('inflow');
-                      int inflowTotal = inflow + inflowDetail;
-                      int outflowDetail = event.get('outflow');
-                      int outflowTotal = outflow + outflowDetail;
-                      inflowTransaction = inflowTotal;
-                      outflowTransaction = outflowTotal;
-                      if (selectedType == "Inflow") {
-                        var dataInflow = {
-                          'inflow': inflowTotal,
-                          'outflow': event.get('outflow'),
-                        };
-                        transaction_amount
-                            .update(dataInflow)
-                            .then((value) =>
-                                print("Transaction with CustomID added"))
-                            .catchError((error) =>
-                                print("Failed to add transaction: $error"));
-                      } else if (selectedType == "Outflow") {
-                        var dataOutflow = {
-                          'inflow': event.get('inflow'),
-                          'outflow': outflowTotal,
-                        };
-                        transaction_amount
-                            .update(dataOutflow)
-                            .then((value) =>
-                                print("Transaction with CustomID added"))
-                            .catchError((error) =>
-                                print("Failed to add transaction: $error"));
-                      }
-                      //////////////
+                      await Database.updateTransactionDetail(
+                          transactionId: transactionId,
+                          docId: docId,
+                          name: nameController.text,
+                          uid: uid,
+                          inflow: inflow,
+                          inflowDetail: event.get('inflow'),
+                          outflowDetail: event.get('ouflow'),
+                          outflow: outflow,
+                          year: selectedDate?.year.toString(),
+                          month: selectedDate?.month.toString(),
+                          weekday: selectedDate?.weekday.toString(),
+                          day: int.parse(selectedDate?.day.toString()),
+                          selectedType: selectedType);
+
                       docId = "";
                     } else {
-                      DocumentReference<Map<String, dynamic>>
-                          transaction_detail = FirebaseFirestore.instance
-                              .collection("transaction")
-                              .doc(transactionId)
-                              .collection("transaction_detail")
-                              .doc(docId);
-                      var dataDetail = {
-                        'idDocument': docId,
-                        'uid': uid,
-                        'inflow': inflow,
-                        'outflow': outflow,
-                        'year': selectedDate?.year.toString(),
-                        'weekday': selectedDate?.weekday.toString(),
-                        'month': selectedDate?.month.toString(),
-                        'day': selectedDate?.day,
-                        'transaction_id': transactionId
-                      };
-                      transaction_detail
-                          .set(dataDetail)
-                          .then((value) =>
-                              print("Transaction with CustomID added"))
-                          .catchError((error) =>
-                              print("Failed to add transaction: $error"));
+                      await Database.addTransactionDetail(
+                          transactionId: transactionId,
+                          docId: docId,
+                          name: nameController.text,
+                          uid: uid,
+                          inflow: inflow,
+                          outflow: outflow,
+                          year: selectedDate?.year.toString(),
+                          month: selectedDate?.month.toString(),
+                          weekday: selectedDate?.weekday.toString(),
+                          day: int.parse(selectedDate?.day.toString()),
+                          selectedType: selectedType);
 
-                      CollectionReference<Map<String, dynamic>> transactions =
-                          FirebaseFirestore.instance.collection(
-                              "transaction/$transactionId/transaction_detail/$docId/transaction_list");
-                      var data = {
-                        'idDocument': docId,
-                        'name': nameController.text,
-                        'uid': uid,
-                        'inflow': inflow,
-                        'outflow': outflow,
-                        'year': selectedDate?.year.toString(),
-                        'weekday': selectedDate?.weekday.toString(),
-                        'month': selectedDate?.month.toString(),
-                        'day': selectedDate?.day,
-                        'transaction_id': transactionId
-                      };
-                      transactions
-                          .add(data)
-                          .then((value) =>
-                              print("Transaction with CustomID added"))
-                          .catchError((error) =>
-                              print("Failed to add transaction: $error"));
+                      await Database.addTransactionList(
+                          transactionId: transactionId,
+                          docId: docId,
+                          name: nameController.text,
+                          uid: uid,
+                          inflow: inflow,
+                          outflow: outflow,
+                          year: selectedDate?.year.toString(),
+                          month: selectedDate?.month.toString(),
+                          weekday: selectedDate?.weekday.toString(),
+                          day: int.parse(selectedDate?.day.toString()));
                       docId = "";
                     }
                   });
 
-                  Navigator.pop(context, 'Added');
+                  Navigator.pop(context);
                 }),
           ],
         ),
