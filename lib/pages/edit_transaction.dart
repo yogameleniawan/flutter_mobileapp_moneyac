@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:mobileapp_moneyac/services/database.dart';
 import 'package:mobileapp_moneyac/services/sign_in.dart';
 import 'package:date_utils/date_utils.dart';
 
@@ -206,7 +207,7 @@ class _EditTransactionState extends State<EditTransaction> {
                         ),
                       ],
                     ))),
-                onTap: () {
+                onTap: () async {
                   DocumentReference<Map<String, dynamic>> transaction_amount =
                       FirebaseFirestore.instance
                           .collection("transaction")
@@ -221,24 +222,44 @@ class _EditTransactionState extends State<EditTransaction> {
                       'inflow': int.parse(totalController.text),
                       'outflow': outflow,
                     };
-                    transaction_amount
+                    await transaction_amount
                         .update(dataInflow)
                         .then(
                             (value) => print("Transaction with CustomID added"))
                         .catchError((error) =>
                             print("Failed to add transaction: $error"));
+                    await Database.updateTransactionFlowMonth(
+                      uid: uid,
+                      idDocument: widget.idDocumentTransaction,
+                      idTransactionMonth: widget.idDocumentDetail,
+                    );
+
+                    await Database.updateTransactionFlow(
+                        idDocument: widget.idDocumentTransaction);
+
+                    await Database.updateAmountUser(uid: uid);
                   } else if (selectedType == "Outflow") {
                     var dataOutflow = {
                       'name': nameController.text,
                       'inflow': inflow,
                       'outflow': int.parse(totalController.text),
                     };
-                    transaction_amount
+                    await transaction_amount
                         .update(dataOutflow)
                         .then(
                             (value) => print("Transaction with CustomID added"))
                         .catchError((error) =>
                             print("Failed to add transaction: $error"));
+                    await Database.updateTransactionFlowMonth(
+                      uid: uid,
+                      idDocument: widget.idDocumentTransaction,
+                      idTransactionMonth: widget.idDocumentDetail,
+                    );
+
+                    await Database.updateTransactionFlow(
+                        idDocument: widget.idDocumentTransaction);
+
+                    await Database.updateAmountUser(uid: uid);
                   }
 
                   Navigator.pop(context, 'Added');

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobileapp_moneyac/pages/home_list.dart';
+import 'package:mobileapp_moneyac/services/database.dart';
 import 'package:mobileapp_moneyac/services/sign_in.dart';
 import 'form_transaction.dart';
 
@@ -242,6 +243,16 @@ class ListDataView extends StatelessWidget {
                       });
                     });
                   });
+                  await Database.updateTransactionFlowMonth(
+                    uid: uid,
+                    idDocument: idDocumentTransaction,
+                    idTransactionMonth: idDocument,
+                  );
+
+                  await Database.updateTransactionFlow(
+                      idDocument: idDocumentTransaction);
+
+                  await Database.updateAmountUser(uid: uid);
                 },
               ),
               new FlatButton(

@@ -274,6 +274,17 @@ class ListDataView extends StatelessWidget {
                           'transaction/$idTransactionDetail/transaction_detail/$idDocumentTransaction/transaction_list')
                       .doc(listId)
                       .delete();
+
+                  await Database.updateTransactionFlowMonth(
+                    uid: uid,
+                    idDocument: idTransactionDetail,
+                    idTransactionMonth: idDocumentTransaction,
+                  );
+
+                  await Database.updateTransactionFlow(
+                      idDocument: idTransactionDetail);
+
+                  await Database.updateAmountUser(uid: uid);
                 },
               ),
               new FlatButton(

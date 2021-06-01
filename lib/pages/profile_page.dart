@@ -87,7 +87,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.all(Radius.circular(15)),
                 ),
-                hintText: widget.nameUser,
+                hintText:
+                    widget.nameUser != null ? widget.nameUser : nameGoogle,
                 hintStyle: TextStyle(fontSize: 15),
                 contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
               ),
