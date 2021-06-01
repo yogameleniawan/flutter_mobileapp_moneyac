@@ -34,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   DateTime initialDate = DateTime.now();
   DateTime selectedDate;
   String docId = "";
+  final formatCurrency = new NumberFormat.currency(locale: "en_US", symbol: "");
   @override
   void initState() {
     super.initState();
@@ -128,18 +129,39 @@ class _HomeScreenState extends State<HomeScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Insight Your Finance with",
+                                    "Total Amount",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 16,
                                     ),
                                   ),
-                                  Text(
-                                    "Moneyac App ",
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
+                                  StreamBuilder(
+                                    stream: FirebaseFirestore.instance
+                                        .collection('users')
+                                        .where('uid', isEqualTo: uid)
+                                        .snapshots(),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                                      if (!snapshot.hasData) {
+                                        return Center(
+                                          child: CircularProgressIndicator(),
+                                        );
+                                      }
+                                      return Column(
+                                        children:
+                                            snapshot.data.docs.map((document) {
+                                          return Text(
+                                            "Rp. " +
+                                                formatCurrency.format(
+                                                    document['totalAmount']),
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold),
+                                          );
+                                        }).toList(),
+                                      );
+                                    },
                                   ),
                                   Text(
                                     "\n\nNever Spend Your Money Before You Have Earned It.",

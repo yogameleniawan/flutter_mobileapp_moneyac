@@ -175,49 +175,6 @@ class StreamerData extends StatelessWidget {
         }
         return ListView(
           children: snapshot.data.docs.map((document) {
-            var course = snapshot.data.size;
-            i++;
-            if (i == course) {
-              totalInflow = totalInflow + document['inflow'];
-              totalOutflow = totalOutflow + document['outflow'];
-              DocumentReference<Map<String, dynamic>> transaction_amount =
-                  FirebaseFirestore.instance
-                      .collection("transaction")
-                      .doc(idDocument);
-              var data = {
-                'inflow': totalInflow,
-                'outflow': totalOutflow,
-              };
-              transaction_amount
-                  .update(data)
-                  .then((value) => print("Transaction with CustomID added"))
-                  .catchError(
-                      (error) => print("Failed to add transaction: $error"));
-              totalInflow = 0;
-              totalOutflow = 0;
-              i = 0;
-            } else {
-              totalInflow = totalInflow + document['inflow'];
-              totalOutflow = totalOutflow + document['outflow'];
-              DocumentReference<Map<String, dynamic>> transaction_amount =
-                  FirebaseFirestore.instance
-                      .collection("transaction")
-                      .doc(idDocument);
-              var data = {
-                'inflow': totalInflow,
-                'outflow': totalOutflow,
-              };
-              transaction_amount
-                  .update(data)
-                  .then((value) => print("Transaction with CustomID added"))
-                  .catchError(
-                      (error) => print("Failed to add transaction: $error"));
-            }
-
-            if (document['inflow'] == null) {
-              print("kosong");
-            }
-
             return Container(
               child: ListDataView(
                   document: document,

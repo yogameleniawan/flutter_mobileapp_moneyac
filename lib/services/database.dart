@@ -71,6 +71,161 @@ class Database {
         .catchError((error) => print("Failed to add transaction: $error"));
   }
 
+  static Future<void> setTransactionDetail({
+    String transactionId,
+    String docId,
+    String name,
+    String uid,
+    int inflow,
+    int inflowDetail,
+    int outflow,
+    int outflowDetail,
+    String year,
+    String month,
+    String weekday,
+    int day,
+    String selectedType,
+  }) async {
+    DocumentReference<Map<String, dynamic>> transaction_detail =
+        FirebaseFirestore.instance
+            .collection("transaction")
+            .doc(transactionId)
+            .collection("transaction_detail")
+            .doc(docId);
+    var dataDetail = {
+      'idDocument': docId,
+      'uid': uid,
+      'inflow': inflow,
+      'outflow': outflow,
+      'year': year,
+      'weekday': weekday,
+      'month': month,
+      'day': day,
+      'transaction_id': transactionId
+    };
+    transaction_detail
+        .set(dataDetail)
+        .then((value) => print("Transaction with CustomID added"))
+        .catchError((error) => print("Failed to add transaction: $error"));
+  }
+
+  static Future<void> updateAmountUser({
+    String uid,
+  }) async {
+    int totalAmount = 0;
+    FirebaseFirestore.instance.collection('transaction/').get().then((value) {
+      value.docs.forEach((element) {
+        String id = element.id;
+        FirebaseFirestore.instance
+            .collection('transaction/$id/transaction_detail/')
+            .get()
+            .then((value) {
+          value.docs.forEach((element) {
+            FirebaseFirestore.instance
+                .collection('transaction/$id/transaction_detail/')
+                .doc(element.id)
+                .snapshots()
+                .listen((value) async {
+              int total = value.get('inflow') - value.get('outflow');
+              totalAmount = totalAmount + total;
+              DocumentReference<Map<String, dynamic>> users =
+                  FirebaseFirestore.instance.collection("users").doc(uid);
+              var data = {
+                'totalAmount': totalAmount,
+              };
+              await users
+                  .update(data)
+                  .then((value) => print("Transaction with CustomID added"))
+                  .catchError(
+                      (error) => print("Failed to add transaction: $error"));
+              print(totalAmount);
+            });
+          });
+        });
+      });
+    });
+  }
+
+  static Future<void> updateTransactionFlowMonth({
+    String uid,
+    String idDocument,
+    String idTransactionMonth,
+  }) async {
+    int totalInflow = 0;
+    int totalOutflow = 0;
+    FirebaseFirestore.instance
+        .collection(
+            'transaction/$idDocument/transaction_detail/$idTransactionMonth/transaction_list/')
+        .get()
+        .then((value) {
+      value.docs.forEach((element) {
+        FirebaseFirestore.instance
+            .collection(
+                'transaction/$idDocument/transaction_detail/$idTransactionMonth/transaction_list/')
+            .doc(element.id)
+            .snapshots()
+            .listen((value) async {
+          int inflow = value.get('inflow');
+          int outflow = value.get('outflow');
+          totalInflow = totalInflow + inflow;
+          totalOutflow = totalOutflow + outflow;
+          DocumentReference<Map<String, dynamic>> transaction =
+              FirebaseFirestore.instance
+                  .collection("transaction")
+                  .doc(idDocument)
+                  .collection("transaction_detail")
+                  .doc(idTransactionMonth);
+          var data = {
+            'inflow': totalInflow,
+            'outflow': totalOutflow,
+          };
+          await transaction
+              .update(data)
+              .then((value) => print("Transaction with CustomID added"))
+              .catchError(
+                  (error) => print("Failed to add transaction: $error"));
+        });
+      });
+    });
+  }
+
+  static Future<void> updateTransactionFlow({
+    String idDocument,
+  }) async {
+    int totalInflow = 0;
+    int totalOutflow = 0;
+    FirebaseFirestore.instance
+        .collection('transaction/$idDocument/transaction_detail/')
+        .get()
+        .then((value) {
+      value.docs.forEach((element) {
+        FirebaseFirestore.instance
+            .collection('transaction/$idDocument/transaction_detail/')
+            .doc(element.id)
+            .snapshots()
+            .listen((value) async {
+          int inflow = value.get('inflow');
+          int outflow = value.get('outflow');
+          totalInflow = totalInflow + inflow;
+          totalOutflow = totalOutflow + outflow;
+          DocumentReference<Map<String, dynamic>> transaction =
+              FirebaseFirestore.instance
+                  .collection("transaction")
+                  .doc(idDocument);
+          var data = {
+            'inflow': totalInflow,
+            'outflow': totalOutflow,
+          };
+          await transaction
+              .update(data)
+              .then((value) => print("Transaction with CustomID added"))
+              .catchError(
+                  (error) => print("Failed to add transaction: $error"));
+        });
+      });
+    });
+  }
+
   static Future<void> updateTransactionDetail({
     String transactionId,
     String docId,

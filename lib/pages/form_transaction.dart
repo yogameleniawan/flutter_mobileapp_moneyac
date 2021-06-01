@@ -225,7 +225,7 @@ class _FormTransactionState extends State<FormTransaction> {
                         ),
                       ],
                     ))),
-                onTap: () {
+                onTap: () async {
                   docId = uid +
                       selectedDate?.day.toString() +
                       selectedDate?.month.toString() +
@@ -253,24 +253,19 @@ class _FormTransactionState extends State<FormTransaction> {
                           weekday: selectedDate?.weekday.toString(),
                           day: int.parse(selectedDate?.day.toString()));
 
-                      Database.updateTransactionDetail(
-                          transactionId: transactionId,
-                          docId: docId,
-                          name: nameController.text,
-                          uid: uid,
-                          inflow: inflow,
-                          inflowDetail: event.get('inflow'),
-                          outflowDetail: event.get('ouflow'),
-                          outflow: outflow,
-                          year: selectedDate?.year.toString(),
-                          month: selectedDate?.month.toString(),
-                          weekday: selectedDate?.weekday.toString(),
-                          day: int.parse(selectedDate?.day.toString()),
-                          selectedType: selectedType);
+                      Database.updateTransactionFlowMonth(
+                        uid: uid,
+                        idDocument: transactionId,
+                        idTransactionMonth: docId,
+                      );
+
+                      Database.updateTransactionFlow(idDocument: transactionId);
+
+                      Database.updateAmountUser(uid: uid);
 
                       docId = "";
                     } else {
-                      Database.addTransactionDetail(
+                      Database.setTransactionDetail(
                           transactionId: transactionId,
                           docId: docId,
                           name: nameController.text,
@@ -294,6 +289,11 @@ class _FormTransactionState extends State<FormTransaction> {
                           month: selectedDate?.month.toString(),
                           weekday: selectedDate?.weekday.toString(),
                           day: int.parse(selectedDate?.day.toString()));
+
+                      Database.updateTransactionFlow(idDocument: transactionId);
+
+                      Database.updateAmountUser(uid: uid);
+
                       docId = "";
                     }
                   });
