@@ -31,7 +31,7 @@ class Database {
     };
     await transactions
         .add(data)
-        .then((value) => print("Transaction with CustomID added"))
+        .then((value) => print("Transaction List with CustomID added"))
         .catchError((error) => print("Failed to add transaction: $error"));
   }
 
@@ -105,8 +105,8 @@ class Database {
     };
     transaction_detail
         .set(dataDetail)
-        .then((value) => print("Transaction with CustomID added"))
-        .catchError((error) => print("Failed to add transaction: $error"));
+        .then((value) => print("Set Transaction Success"))
+        .catchError((error) => print("Failed to set transaction: $error"));
   }
 
   static Future<void> updateAmountUser({
@@ -135,10 +135,9 @@ class Database {
               };
               await users
                   .update(data)
-                  .then((value) => print("Transaction with CustomID added"))
+                  .then((value) => print("Update Amount User"))
                   .catchError(
-                      (error) => print("Failed to add transaction: $error"));
-              print(totalAmount);
+                      (error) => print("Failed to update amount: $error"));
             });
           });
         });
@@ -181,9 +180,9 @@ class Database {
           };
           await transaction
               .update(data)
-              .then((value) => print("Transaction with CustomID added"))
-              .catchError(
-                  (error) => print("Failed to add transaction: $error"));
+              .then((value) => print("Transaction Flow Month Updated"))
+              .catchError((error) =>
+                  print("Failed to update transaction month: $error"));
         });
       });
     });
@@ -218,9 +217,9 @@ class Database {
           };
           await transaction
               .update(data)
-              .then((value) => print("Transaction with CustomID added"))
+              .then((value) => print("Transaction Flow Year Updated"))
               .catchError(
-                  (error) => print("Failed to add transaction: $error"));
+                  (error) => print("Failed to update transaction: $error"));
         });
       });
     });
@@ -256,8 +255,8 @@ class Database {
       };
       transaction_amount
           .update(dataInflow)
-          .then((value) => print("Transaction with CustomID added"))
-          .catchError((error) => print("Failed to add transaction: $error"));
+          .then((value) => print("Transaction Month Updated"))
+          .catchError((error) => print("Failed to update transaction: $error"));
     } else if (selectedType == "Outflow") {
       var dataOutflow = {
         'inflow': inflowDetail,
@@ -265,8 +264,8 @@ class Database {
       };
       await transaction_amount
           .update(dataOutflow)
-          .then((value) => print("Transaction with CustomID added"))
-          .catchError((error) => print("Failed to add transaction: $error"));
+          .then((value) => print("Transaction Month Updated"))
+          .catchError((error) => print("Failed to update transaction: $error"));
     }
   }
 
@@ -291,8 +290,8 @@ class Database {
     };
     await transactions
         .set(data)
-        .then((value) => print("Transaction with CustomID added"))
-        .catchError((error) => print("Failed to add transaction: $error"));
+        .then((value) => print("Transaction Updated"))
+        .catchError((error) => print("Failed to update transaction: $error"));
   }
 
   static Stream<QuerySnapshot> readTransaction({String month, String uid}) {

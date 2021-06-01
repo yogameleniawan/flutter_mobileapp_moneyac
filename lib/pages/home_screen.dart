@@ -381,6 +381,7 @@ class ListDataView extends StatelessWidget {
                   await Database.deleteTransaction(idDocument: idDocument);
                   await Database.deleteAllTransactionDetail(
                       idDocument: idDocument);
+                  await Database.updateAmountUser(uid: uid);
                 },
               ),
               new FlatButton(
