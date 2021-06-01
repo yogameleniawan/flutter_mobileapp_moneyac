@@ -243,6 +243,7 @@ class ListDataView extends StatelessWidget {
                       });
                     });
                   });
+
                   await Database.updateTransactionFlowMonth(
                     uid: uid,
                     idDocument: idDocumentTransaction,

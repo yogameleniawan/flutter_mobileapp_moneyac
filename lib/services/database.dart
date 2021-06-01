@@ -109,20 +109,6 @@ class Database {
         .catchError((error) => print("Failed to set transaction: $error"));
   }
 
-  static Future<void> updateAmountDefault({
-    String uid,
-  }) async {
-    DocumentReference<Map<String, dynamic>> users =
-        FirebaseFirestore.instance.collection("users").doc(uid);
-    var data = {
-      'totalAmount': 0,
-    };
-    await users
-        .update(data)
-        .then((value) => print("Update Amount User"))
-        .catchError((error) => print("Failed to update amount: $error"));
-  }
-
   static Future<void> updateAmountUser({
     String uid,
   }) async {
@@ -315,14 +301,6 @@ class Database {
         .where('uid', isEqualTo: uid);
 
     return transactionCollection.snapshots();
-  }
-
-  static Future<int> readAllTransaction() {
-    var transactionCollection =
-        FirebaseFirestore.instance.collection('transaction').snapshots();
-    Future<int> length = transactionCollection.length;
-
-    return length;
   }
 
   static Stream<QuerySnapshot> readTransactionList(

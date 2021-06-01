@@ -34,7 +34,6 @@ class _HomeScreenState extends State<HomeScreen> {
   DateTime initialDate = DateTime.now();
   DateTime selectedDate;
   String docId = "";
-
   final formatCurrency = new NumberFormat.currency(locale: "en_US", symbol: "");
   @override
   void initState() {
@@ -357,22 +356,9 @@ class ListDataView extends StatelessWidget {
   final QueryDocumentSnapshot<Object> document;
   final formatCurrency = new NumberFormat.currency(locale: "en_US", symbol: "");
   final firestoreInstance = FirebaseFirestore.instance;
-  int length;
-
-  Future<void> getTransactionLength() async {
-    length = await getDocumentLength();
-  }
-
-  Future<int> getDocumentLength() async {
-    var _myDoc =
-        await FirebaseFirestore.instance.collection('transaction').get();
-    var _myDocCount = _myDoc.docs;
-    return _myDocCount.length;
-  }
 
   @override
   Widget build(BuildContext context) {
-    getTransactionLength();
     Future<void> _showMyDialog(String idDocument) async {
       return showDialog<void>(
         context: context,
@@ -396,15 +382,11 @@ class ListDataView extends StatelessWidget {
                   await Database.deleteAllTransactionDetail(
                       idDocument: idDocument);
                   await Database.updateAmountUser(uid: uid);
-                  if (length <= 1) {
-                    await Database.updateAmountDefault(uid: uid);
-                  }
                 },
               ),
               new FlatButton(
                 child: new Text('NO'),
-                onPressed: () async {
-                  print(length);
+                onPressed: () {
                   Navigator.of(context).pop();
                 },
               ),

@@ -207,7 +207,7 @@ class _EditTransactionState extends State<EditTransaction> {
                         ),
                       ],
                     ))),
-                onTap: () async {
+                onTap: () {
                   DocumentReference<Map<String, dynamic>> transaction_amount =
                       FirebaseFirestore.instance
                           .collection("transaction")
@@ -222,44 +222,44 @@ class _EditTransactionState extends State<EditTransaction> {
                       'inflow': int.parse(totalController.text),
                       'outflow': outflow,
                     };
-                    await transaction_amount
+                    transaction_amount
                         .update(dataInflow)
                         .then(
                             (value) => print("Transaction with CustomID added"))
                         .catchError((error) =>
                             print("Failed to add transaction: $error"));
-                    await Database.updateTransactionFlowMonth(
+                    Database.updateTransactionFlowMonth(
                       uid: uid,
                       idDocument: widget.idDocumentTransaction,
                       idTransactionMonth: widget.idDocumentDetail,
                     );
 
-                    await Database.updateTransactionFlow(
+                    Database.updateTransactionFlow(
                         idDocument: widget.idDocumentTransaction);
 
-                    await Database.updateAmountUser(uid: uid);
+                    Database.updateAmountUser(uid: uid);
                   } else if (selectedType == "Outflow") {
                     var dataOutflow = {
                       'name': nameController.text,
                       'inflow': inflow,
                       'outflow': int.parse(totalController.text),
                     };
-                    await transaction_amount
+                    transaction_amount
                         .update(dataOutflow)
                         .then(
                             (value) => print("Transaction with CustomID added"))
                         .catchError((error) =>
                             print("Failed to add transaction: $error"));
-                    await Database.updateTransactionFlowMonth(
+                    Database.updateTransactionFlowMonth(
                       uid: uid,
                       idDocument: widget.idDocumentTransaction,
                       idTransactionMonth: widget.idDocumentDetail,
                     );
 
-                    await Database.updateTransactionFlow(
+                    Database.updateTransactionFlow(
                         idDocument: widget.idDocumentTransaction);
 
-                    await Database.updateAmountUser(uid: uid);
+                    Database.updateAmountUser(uid: uid);
                   }
 
                   Navigator.pop(context, 'Added');

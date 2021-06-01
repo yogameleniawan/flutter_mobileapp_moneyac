@@ -21,9 +21,9 @@ class _FormTransactionState extends State<FormTransaction> {
   DateTime selectedDate;
   String docId;
   String transactionId;
+  String _chosenValue;
   int inflow;
   int outflow;
-  bool statusAvailable = false;
   final Map<String, IconData> _data = Map.fromIterables([
     'Please choose Inflow/Outflow',
     'Inflow',
@@ -233,35 +233,39 @@ class _FormTransactionState extends State<FormTransaction> {
                   transactionId = uid +
                       selectedDate?.month.toString() +
                       selectedDate?.year.toString();
-
-                  await Database.addTransactionList(
-                      transactionId: transactionId,
-                      docId: docId,
-                      name: nameController.text,
-                      uid: uid,
-                      inflow: inflow,
-                      outflow: outflow,
-                      year: selectedDate?.year.toString(),
-                      month: selectedDate?.month.toString(),
-                      weekday: selectedDate?.weekday.toString(),
-                      day: int.parse(selectedDate?.day.toString()));
-
                   FirebaseFirestore.instance
                       .collection("transaction")
                       .doc(transactionId)
                       .collection("transaction_detail")
                       .doc(docId)
                       .snapshots()
-                      .listen((DocumentSnapshot event) async {
+                      .listen((DocumentSnapshot event) {
                     if (event.exists) {
-                      await Database.updateTransactionFlowMonth(
+                      Database.addTransactionList(
+                          transactionId: transactionId,
+                          docId: docId,
+                          name: nameController.text,
+                          uid: uid,
+                          inflow: inflow,
+                          outflow: outflow,
+                          year: selectedDate?.year.toString(),
+                          month: selectedDate?.month.toString(),
+                          weekday: selectedDate?.weekday.toString(),
+                          day: int.parse(selectedDate?.day.toString()));
+
+                      Database.updateTransactionFlowMonth(
                         uid: uid,
                         idDocument: transactionId,
                         idTransactionMonth: docId,
                       );
+
+                      Database.updateTransactionFlow(idDocument: transactionId);
+
+                      Database.updateAmountUser(uid: uid);
+
                       docId = "";
                     } else {
-                      await Database.setTransactionDetail(
+                      Database.setTransactionDetail(
                           transactionId: transactionId,
                           docId: docId,
                           name: nameController.text,
@@ -274,12 +278,24 @@ class _FormTransactionState extends State<FormTransaction> {
                           day: int.parse(selectedDate?.day.toString()),
                           selectedType: selectedType);
 
+                      Database.addTransactionList(
+                          transactionId: transactionId,
+                          docId: docId,
+                          name: nameController.text,
+                          uid: uid,
+                          inflow: inflow,
+                          outflow: outflow,
+                          year: selectedDate?.year.toString(),
+                          month: selectedDate?.month.toString(),
+                          weekday: selectedDate?.weekday.toString(),
+                          day: int.parse(selectedDate?.day.toString()));
+
+                      Database.updateTransactionFlow(idDocument: transactionId);
+
+                      Database.updateAmountUser(uid: uid);
+
                       docId = "";
                     }
-                    await Database.updateTransactionFlow(
-                        idDocument: transactionId);
-
-                    await Database.updateAmountUser(uid: uid);
                   });
 
                   Navigator.pop(context);
