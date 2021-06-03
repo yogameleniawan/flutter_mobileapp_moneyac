@@ -109,20 +109,6 @@ class Database {
         .catchError((error) => print("Failed to set transaction: $error"));
   }
 
-  static Future<void> updateAmountDefault({
-    String uid,
-  }) async {
-    DocumentReference<Map<String, dynamic>> users =
-        FirebaseFirestore.instance.collection("users").doc(uid);
-    var data = {
-      'totalAmount': 0,
-    };
-    await users
-        .update(data)
-        .then((value) => print("Update Amount User"))
-        .catchError((error) => print("Failed to update amount: $error"));
-  }
-
   static Future<void> updateAmountUser({
     String uid,
   }) async {
@@ -200,6 +186,55 @@ class Database {
         });
       });
     });
+  }
+
+  static Future<void> updateTransactionListDefault({
+    String idDocument,
+    String idDocumentDetail,
+  }) async {
+    DocumentReference<Map<String, dynamic>> document = FirebaseFirestore
+        .instance
+        .collection("transaction")
+        .doc(idDocument)
+        .collection("transaction_detail")
+        .doc(idDocumentDetail);
+    var data = {
+      'inflow': 0,
+      'outflow': 0,
+    };
+    await document
+        .update(data)
+        .then((value) => print("Update Amount User"))
+        .catchError((error) => print("Failed to update amount: $error"));
+  }
+
+  static Future<void> updateTransactionDetailDefault({
+    String idDocument,
+  }) async {
+    DocumentReference<Map<String, dynamic>> document =
+        FirebaseFirestore.instance.collection("transaction").doc(idDocument);
+    var data = {
+      'inflow': 0,
+      'outflow': 0,
+    };
+    await document
+        .update(data)
+        .then((value) => print("Update Amount User"))
+        .catchError((error) => print("Failed to update amount: $error"));
+  }
+
+  static Future<void> updateAmountDefault({
+    String uid,
+  }) async {
+    DocumentReference<Map<String, dynamic>> users =
+        FirebaseFirestore.instance.collection("users").doc(uid);
+    var data = {
+      'totalAmount': 0,
+    };
+    await users
+        .update(data)
+        .then((value) => print("Update Amount User"))
+        .catchError((error) => print("Failed to update amount: $error"));
   }
 
   static Future<void> updateTransactionFlow({
@@ -315,14 +350,6 @@ class Database {
         .where('uid', isEqualTo: uid);
 
     return transactionCollection.snapshots();
-  }
-
-  static Future<int> readAllTransaction() {
-    var transactionCollection =
-        FirebaseFirestore.instance.collection('transaction').snapshots();
-    Future<int> length = transactionCollection.length;
-
-    return length;
   }
 
   static Stream<QuerySnapshot> readTransactionList(

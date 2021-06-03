@@ -34,7 +34,6 @@ class _HomeScreenState extends State<HomeScreen> {
   DateTime initialDate = DateTime.now();
   DateTime selectedDate;
   String docId = "";
-
   final formatCurrency = new NumberFormat.currency(locale: "en_US", symbol: "");
   @override
   void initState() {
@@ -283,9 +282,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     .collection("transaction")
                     .doc(docId)
                     .snapshots()
-                    .listen((DocumentSnapshot event) async {
+                    .listen((DocumentSnapshot event) {
                   if (event.exists) {
-                    await Database.updateTransaction(
+                    Database.updateTransaction(
                         docId: docId,
                         idDocument: event.get("idDocument"),
                         uid: event.get("uid"),
@@ -295,7 +294,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         month: event.get("month"));
                     docId = "";
                   } else {
-                    await Database.updateTransaction(
+                    Database.updateTransaction(
                         docId: docId,
                         idDocument: docId,
                         uid: uid,
@@ -444,6 +443,7 @@ class ListDataView extends StatelessWidget {
     } else if (document['month'] == "12") {
       month = "December";
     }
+
     return InkWell(
       child: Expanded(
           child: Padding(

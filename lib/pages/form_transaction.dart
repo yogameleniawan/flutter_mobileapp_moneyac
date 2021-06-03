@@ -21,9 +21,9 @@ class _FormTransactionState extends State<FormTransaction> {
   DateTime selectedDate;
   String docId;
   String transactionId;
+  String _chosenValue;
   int inflow;
   int outflow;
-  bool statusAvailable = false;
   final Map<String, IconData> _data = Map.fromIterables([
     'Please choose Inflow/Outflow',
     'Inflow',
@@ -225,7 +225,7 @@ class _FormTransactionState extends State<FormTransaction> {
                         ),
                       ],
                     ))),
-                onTap: () async {
+                onTap: () {
                   docId = uid +
                       selectedDate?.day.toString() +
                       selectedDate?.month.toString() +
@@ -233,8 +233,7 @@ class _FormTransactionState extends State<FormTransaction> {
                   transactionId = uid +
                       selectedDate?.month.toString() +
                       selectedDate?.year.toString();
-
-                  await Database.addTransactionList(
+                  Database.addTransactionList(
                       transactionId: transactionId,
                       docId: docId,
                       name: nameController.text,
@@ -254,14 +253,14 @@ class _FormTransactionState extends State<FormTransaction> {
                       .snapshots()
                       .listen((DocumentSnapshot event) async {
                     if (event.exists) {
-                      await Database.updateTransactionFlowMonth(
+                      Database.updateTransactionFlowMonth(
                         uid: uid,
                         idDocument: transactionId,
                         idTransactionMonth: docId,
                       );
                       docId = "";
                     } else {
-                      await Database.setTransactionDetail(
+                      Database.setTransactionDetail(
                           transactionId: transactionId,
                           docId: docId,
                           name: nameController.text,
@@ -276,10 +275,8 @@ class _FormTransactionState extends State<FormTransaction> {
 
                       docId = "";
                     }
-                    await Database.updateTransactionFlow(
-                        idDocument: transactionId);
-
-                    await Database.updateAmountUser(uid: uid);
+                    Database.updateTransactionFlow(idDocument: transactionId);
+                    Database.updateAmountUser(uid: uid);
                   });
 
                   Navigator.pop(context);

@@ -266,19 +266,19 @@ class _LoginPageState extends State<LoginPage> {
             ))),
         onTap: () {
           signInWithGoogle().then((result) {
-            DocumentReference<Map<String, dynamic>> users =
-                FirebaseFirestore.instance.collection('/users').doc(uid);
-            var user = {
-              'uid': uid,
-              'name': nameGoogle,
-              'email': emailGoogle,
-              'imageUrl': imageUrl,
-              'totalAmount': 0
-            };
-            users
-                .set(user)
-                .then((value) => print("User with CustomID added"))
-                .catchError((error) => print("Failed to add user: $error"));
+            // CollectionReference<Map<String, dynamic>> users =
+            //     FirebaseFirestore.instance.collection('/users/$uid');
+            // var user = {
+            //   'uid': uid,
+            //   'name': nameGoogle,
+            //   'email': emailGoogle,
+            //   'imageUrl': imageUrl,
+            //   'totalAmount': 0
+            // };
+            // users
+            //     .add(user)
+            //     .then((value) => print("User with CustomID added"))
+            //     .catchError((error) => print("Failed to add user: $error"));
             if (result != null) {
               Navigator.of(context).push(
                 MaterialPageRoute(
