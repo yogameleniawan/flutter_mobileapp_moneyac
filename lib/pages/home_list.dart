@@ -247,8 +247,25 @@ class ListDataView extends StatelessWidget {
   final int inflowDetail;
   final int outflowDetail;
 
+  int length;
+
+  Future<void> getTransactionLength() async {
+    length = await getDocumentLength();
+  }
+
+  Future<int> getDocumentLength() async {
+    String id = uid + document['month'] + document['year'];
+    var _myDoc = await FirebaseFirestore.instance
+        .collection(
+            'transaction/$id/transaction_detail/$idDocumentTransaction/transaction_list')
+        .get();
+    var _myDocCount = _myDoc.docs;
+    return _myDocCount.length;
+  }
+
   @override
   Widget build(BuildContext context) {
+    getTransactionLength();
     String idTransactionDetail = document['transaction_id'];
     Future<void> _showMyDialog(String listId) async {
       return showDialog<void>(
@@ -284,6 +301,12 @@ class ListDataView extends StatelessWidget {
                       idDocument: idTransactionDetail);
 
                   await Database.updateAmountUser(uid: uid);
+
+                  if (length <= 1) {
+                    await Database.updateTransactionListDefault(
+                        idDocument: idTransactionDetail,
+                        idDocumentDetail: idDocumentTransaction);
+                  }
                 },
               ),
               new FlatButton(

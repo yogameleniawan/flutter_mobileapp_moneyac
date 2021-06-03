@@ -197,8 +197,23 @@ class ListDataView extends StatelessWidget {
   final String nameMonth;
   final formatCurrency = new NumberFormat.currency(locale: "en_US", symbol: "");
 
+  int length;
+
+  Future<void> getTransactionLength() async {
+    length = await getDocumentLength();
+  }
+
+  Future<int> getDocumentLength() async {
+    var _myDoc = await FirebaseFirestore.instance
+        .collection('transaction/$idDocumentTransaction/transaction_detail')
+        .get();
+    var _myDocCount = _myDoc.docs;
+    return _myDocCount.length;
+  }
+
   @override
   Widget build(BuildContext context) {
+    getTransactionLength();
     String idTransactionDetail = document['idDocument'];
     String transactionId = document['transaction_id'];
 
@@ -254,6 +269,10 @@ class ListDataView extends StatelessWidget {
                       idDocument: idDocumentTransaction);
 
                   await Database.updateAmountUser(uid: uid);
+                  if (length <= 1) {
+                    await Database.updateTransactionDetailDefault(
+                        idDocument: idDocumentTransaction);
+                  }
                 },
               ),
               new FlatButton(

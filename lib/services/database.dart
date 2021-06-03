@@ -188,6 +188,41 @@ class Database {
     });
   }
 
+  static Future<void> updateTransactionListDefault({
+    String idDocument,
+    String idDocumentDetail,
+  }) async {
+    DocumentReference<Map<String, dynamic>> document = FirebaseFirestore
+        .instance
+        .collection("transaction")
+        .doc(idDocument)
+        .collection("transaction_detail")
+        .doc(idDocumentDetail);
+    var data = {
+      'inflow': 0,
+      'outflow': 0,
+    };
+    await document
+        .update(data)
+        .then((value) => print("Update Amount User"))
+        .catchError((error) => print("Failed to update amount: $error"));
+  }
+
+  static Future<void> updateTransactionDetailDefault({
+    String idDocument,
+  }) async {
+    DocumentReference<Map<String, dynamic>> document =
+        FirebaseFirestore.instance.collection("transaction").doc(idDocument);
+    var data = {
+      'inflow': 0,
+      'outflow': 0,
+    };
+    await document
+        .update(data)
+        .then((value) => print("Update Amount User"))
+        .catchError((error) => print("Failed to update amount: $error"));
+  }
+
   static Future<void> updateAmountDefault({
     String uid,
   }) async {
