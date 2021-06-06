@@ -11,13 +11,36 @@ void main() async {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Login',
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-      ),
-      home: LoginPage(),
+    return FutureBuilder(
+      future: Future.delayed(Duration(seconds: 3)),
+      builder: (context, AsyncSnapshot snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return MaterialApp(debugShowCheckedModeBanner: false, home: Splash());
+        } else {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Flutter Login',
+            theme: ThemeData(
+              primarySwatch: Colors.green,
+            ),
+            home: LoginPage(),
+          );
+        }
+      },
+    );
+  }
+}
+
+class Splash extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+          decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage(
+                      "assets/splash1.png"), //Image Asset Background Image
+                  fit: BoxFit.cover))),
     );
   }
 }

@@ -268,11 +268,13 @@ class ListDataView extends StatelessWidget {
                   await Database.updateTransactionFlow(
                       idDocument: idDocumentTransaction);
 
-                  await Database.updateAmountUser(uid: uid);
                   if (length <= 1) {
                     await Database.updateTransactionDetailDefault(
                         idDocument: idDocumentTransaction);
+                    await Database.updateAmountDefault(uid: uid);
                   }
+
+                  await Database.updateAmountUser(uid: uid);
                 },
               ),
               new FlatButton(

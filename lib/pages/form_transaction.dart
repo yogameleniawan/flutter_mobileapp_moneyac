@@ -38,6 +38,7 @@ class _FormTransactionState extends State<FormTransaction> {
   TextEditingController dateController = new TextEditingController();
   TextEditingController nameController = new TextEditingController();
   TextEditingController totalController = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

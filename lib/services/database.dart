@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class Database {
   static Future<void> addTransactionList({
@@ -341,6 +342,26 @@ class Database {
         .set(data)
         .then((value) => print("Transaction Updated"))
         .catchError((error) => print("Failed to update transaction: $error"));
+  }
+
+  static Future<void> updateNameUser({
+    String uid,
+    String name,
+  }) async {
+    DocumentReference<Map<String, dynamic>> users =
+        FirebaseFirestore.instance.collection("users").doc(uid);
+    var data = {'name': name};
+    users.update(data);
+  }
+
+  static Future<void> updateEmailUser({
+    String uid,
+    String email,
+  }) async {
+    DocumentReference<Map<String, dynamic>> users =
+        FirebaseFirestore.instance.collection("users").doc(uid);
+    var data = {'email': email};
+    users.update(data);
   }
 
   static Stream<QuerySnapshot> readTransaction({String month, String uid}) {
