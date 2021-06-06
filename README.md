@@ -1,6 +1,6 @@
 # mobileapp_moneyac
 
-A new Flutter project.
+Moneyac App Mobile was created by Flutter and Firebase API
 
 ## Login Register
 ![plot](./screenshots/1.png)
