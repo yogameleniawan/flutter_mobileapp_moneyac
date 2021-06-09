@@ -273,53 +273,99 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 15.0, right: 14, left: 14),
-            child: TextFormField(
-              readOnly: true,
-              style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15),
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
+          emailGoogle == ""
+              ? Padding(
+                  padding:
+                      const EdgeInsets.only(top: 15.0, right: 14, left: 14),
+                  child: TextFormField(
+                    readOnly: true,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15),
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                        ),
+                        hintText: name,
+                        hintStyle: TextStyle(fontSize: 15),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            showUpdateName();
+                          },
+                          child: Icon(Icons.edit),
+                        )),
                   ),
-                  hintText: name,
-                  hintStyle: TextStyle(fontSize: 15),
-                  contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                  suffixIcon: GestureDetector(
-                    onTap: () {
-                      showUpdateName();
-                    },
-                    child: Icon(Icons.edit),
-                  )),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 15.0, right: 14, left: 14),
-            child: TextFormField(
-              readOnly: true,
-              style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15),
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                )
+              : Padding(
+                  padding:
+                      const EdgeInsets.only(top: 15.0, right: 14, left: 14),
+                  child: TextFormField(
+                    readOnly: true,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      ),
+                      hintText: name,
+                      hintStyle: TextStyle(fontSize: 15),
+                      contentPadding:
+                          EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                    ),
                   ),
-                  hintText: email,
-                  hintStyle: TextStyle(fontSize: 15),
-                  contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-                  suffixIcon: GestureDetector(
-                    onTap: () async {
-                      showUpdateEmail();
-                    },
-                    child: Icon(Icons.edit),
-                  )),
-            ),
-          ),
-          email != null
+                ),
+          emailGoogle == ""
+              ? Padding(
+                  padding:
+                      const EdgeInsets.only(top: 15.0, right: 14, left: 14),
+                  child: TextFormField(
+                    readOnly: true,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15),
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(15)),
+                        ),
+                        hintText: email,
+                        hintStyle: TextStyle(fontSize: 15),
+                        contentPadding:
+                            EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                        suffixIcon: GestureDetector(
+                          onTap: () async {
+                            showUpdateEmail();
+                          },
+                          child: Icon(Icons.edit),
+                        )),
+                  ),
+                )
+              : Padding(
+                  padding:
+                      const EdgeInsets.only(top: 15.0, right: 14, left: 14),
+                  child: TextFormField(
+                    readOnly: true,
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15),
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                      ),
+                      hintText: email,
+                      hintStyle: TextStyle(fontSize: 15),
+                      contentPadding:
+                          EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+                    ),
+                  ),
+                ),
+          emailGoogle == ""
               ? Padding(
                   padding:
                       const EdgeInsets.only(top: 15.0, right: 14, left: 14),
