@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
+import 'package:mobileapp_moneyac/services/database.dart';
 import 'package:mobileapp_moneyac/services/sign_in.dart';
-import 'package:date_utils/date_utils.dart';
 
 class EditTransaction extends StatefulWidget {
   EditTransaction(
@@ -227,6 +226,16 @@ class _EditTransactionState extends State<EditTransaction> {
                             (value) => print("Transaction with CustomID added"))
                         .catchError((error) =>
                             print("Failed to add transaction: $error"));
+                    Database.updateTransactionFlowMonth(
+                      uid: uid,
+                      idDocument: widget.idDocumentTransaction,
+                      idTransactionMonth: widget.idDocumentDetail,
+                    );
+
+                    Database.updateTransactionFlow(
+                        idDocument: widget.idDocumentTransaction);
+
+                    Database.updateAmountUser(uid: uid);
                   } else if (selectedType == "Outflow") {
                     var dataOutflow = {
                       'name': nameController.text,
@@ -239,6 +248,16 @@ class _EditTransactionState extends State<EditTransaction> {
                             (value) => print("Transaction with CustomID added"))
                         .catchError((error) =>
                             print("Failed to add transaction: $error"));
+                    Database.updateTransactionFlowMonth(
+                      uid: uid,
+                      idDocument: widget.idDocumentTransaction,
+                      idTransactionMonth: widget.idDocumentDetail,
+                    );
+
+                    Database.updateTransactionFlow(
+                        idDocument: widget.idDocumentTransaction);
+
+                    Database.updateAmountUser(uid: uid);
                   }
 
                   Navigator.pop(context, 'Added');

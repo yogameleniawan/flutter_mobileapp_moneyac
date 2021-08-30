@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mobileapp_moneyac/pages/home_list.dart';
+import 'package:mobileapp_moneyac/services/database.dart';
 import 'package:mobileapp_moneyac/services/sign_in.dart';
 import 'form_transaction.dart';
 
@@ -175,49 +176,6 @@ class StreamerData extends StatelessWidget {
         }
         return ListView(
           children: snapshot.data.docs.map((document) {
-            var course = snapshot.data.size;
-            i++;
-            if (i == course) {
-              totalInflow = totalInflow + document['inflow'];
-              totalOutflow = totalOutflow + document['outflow'];
-              DocumentReference<Map<String, dynamic>> transaction_amount =
-                  FirebaseFirestore.instance
-                      .collection("transaction")
-                      .doc(idDocument);
-              var data = {
-                'inflow': totalInflow,
-                'outflow': totalOutflow,
-              };
-              transaction_amount
-                  .update(data)
-                  .then((value) => print("Transaction with CustomID added"))
-                  .catchError(
-                      (error) => print("Failed to add transaction: $error"));
-              totalInflow = 0;
-              totalOutflow = 0;
-              i = 0;
-            } else {
-              totalInflow = totalInflow + document['inflow'];
-              totalOutflow = totalOutflow + document['outflow'];
-              DocumentReference<Map<String, dynamic>> transaction_amount =
-                  FirebaseFirestore.instance
-                      .collection("transaction")
-                      .doc(idDocument);
-              var data = {
-                'inflow': totalInflow,
-                'outflow': totalOutflow,
-              };
-              transaction_amount
-                  .update(data)
-                  .then((value) => print("Transaction with CustomID added"))
-                  .catchError(
-                      (error) => print("Failed to add transaction: $error"));
-            }
-
-            if (document['inflow'] == null) {
-              print("kosong");
-            }
-
             return Container(
               child: ListDataView(
                   document: document,
@@ -239,8 +197,23 @@ class ListDataView extends StatelessWidget {
   final String nameMonth;
   final formatCurrency = new NumberFormat.currency(locale: "en_US", symbol: "");
 
+  int length;
+
+  Future<void> getTransactionLength() async {
+    length = await getDocumentLength();
+  }
+
+  Future<int> getDocumentLength() async {
+    var _myDoc = await FirebaseFirestore.instance
+        .collection('transaction/$idDocumentTransaction/transaction_detail')
+        .get();
+    var _myDocCount = _myDoc.docs;
+    return _myDocCount.length;
+  }
+
   @override
   Widget build(BuildContext context) {
+    getTransactionLength();
     String idTransactionDetail = document['idDocument'];
     String transactionId = document['transaction_id'];
 
@@ -285,6 +258,23 @@ class ListDataView extends StatelessWidget {
                       });
                     });
                   });
+
+                  await Database.updateTransactionFlowMonth(
+                    uid: uid,
+                    idDocument: idDocumentTransaction,
+                    idTransactionMonth: idDocument,
+                  );
+
+                  await Database.updateTransactionFlow(
+                      idDocument: idDocumentTransaction);
+
+                  if (length <= 1) {
+                    await Database.updateTransactionDetailDefault(
+                        idDocument: idDocumentTransaction);
+                    await Database.updateAmountDefault(uid: uid);
+                  }
+
+                  await Database.updateAmountUser(uid: uid);
                 },
               ),
               new FlatButton(

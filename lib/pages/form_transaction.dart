@@ -38,6 +38,7 @@ class _FormTransactionState extends State<FormTransaction> {
   TextEditingController dateController = new TextEditingController();
   TextEditingController nameController = new TextEditingController();
   TextEditingController totalController = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -233,44 +234,34 @@ class _FormTransactionState extends State<FormTransaction> {
                   transactionId = uid +
                       selectedDate?.month.toString() +
                       selectedDate?.year.toString();
+                  Database.addTransactionList(
+                      transactionId: transactionId,
+                      docId: docId,
+                      name: nameController.text,
+                      uid: uid,
+                      inflow: inflow,
+                      outflow: outflow,
+                      year: selectedDate?.year.toString(),
+                      month: selectedDate?.month.toString(),
+                      weekday: selectedDate?.weekday.toString(),
+                      day: int.parse(selectedDate?.day.toString()));
+
                   FirebaseFirestore.instance
                       .collection("transaction")
                       .doc(transactionId)
                       .collection("transaction_detail")
                       .doc(docId)
                       .snapshots()
-                      .listen((DocumentSnapshot event) {
+                      .listen((DocumentSnapshot event) async {
                     if (event.exists) {
-                      Database.addTransactionList(
-                          transactionId: transactionId,
-                          docId: docId,
-                          name: nameController.text,
-                          uid: uid,
-                          inflow: inflow,
-                          outflow: outflow,
-                          year: selectedDate?.year.toString(),
-                          month: selectedDate?.month.toString(),
-                          weekday: selectedDate?.weekday.toString(),
-                          day: int.parse(selectedDate?.day.toString()));
-
-                      Database.updateTransactionDetail(
-                          transactionId: transactionId,
-                          docId: docId,
-                          name: nameController.text,
-                          uid: uid,
-                          inflow: inflow,
-                          inflowDetail: event.get('inflow'),
-                          outflowDetail: event.get('ouflow'),
-                          outflow: outflow,
-                          year: selectedDate?.year.toString(),
-                          month: selectedDate?.month.toString(),
-                          weekday: selectedDate?.weekday.toString(),
-                          day: int.parse(selectedDate?.day.toString()),
-                          selectedType: selectedType);
-
+                      Database.updateTransactionFlowMonth(
+                        uid: uid,
+                        idDocument: transactionId,
+                        idTransactionMonth: docId,
+                      );
                       docId = "";
                     } else {
-                      Database.addTransactionDetail(
+                      Database.setTransactionDetail(
                           transactionId: transactionId,
                           docId: docId,
                           name: nameController.text,
@@ -283,19 +274,10 @@ class _FormTransactionState extends State<FormTransaction> {
                           day: int.parse(selectedDate?.day.toString()),
                           selectedType: selectedType);
 
-                      Database.addTransactionList(
-                          transactionId: transactionId,
-                          docId: docId,
-                          name: nameController.text,
-                          uid: uid,
-                          inflow: inflow,
-                          outflow: outflow,
-                          year: selectedDate?.year.toString(),
-                          month: selectedDate?.month.toString(),
-                          weekday: selectedDate?.weekday.toString(),
-                          day: int.parse(selectedDate?.day.toString()));
                       docId = "";
                     }
+                    Database.updateTransactionFlow(idDocument: transactionId);
+                    Database.updateAmountUser(uid: uid);
                   });
 
                   Navigator.pop(context);

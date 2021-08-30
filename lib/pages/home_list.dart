@@ -214,44 +214,6 @@ class StreamerData extends StatelessWidget {
         return ListView(
           children: snapshot.data.docs.map((document) {
             String idDocumentList = document.id;
-            totalInflow = totalInflow + document['inflow'];
-            totalOutflow = totalOutflow + document['outflow'];
-            var course = snapshot.data.size;
-            i++;
-            if (i == course) {
-              DocumentReference<Map<String, dynamic>> transaction_amount =
-                  FirebaseFirestore.instance
-                      .collection(
-                          "transaction/$transactionId/transaction_detail/")
-                      .doc(idDocument);
-              var data = {
-                'inflow': totalInflow,
-                'outflow': totalOutflow,
-              };
-              transaction_amount
-                  .update(data)
-                  .then((value) => print("Transaction with CustomID added"))
-                  .catchError(
-                      (error) => print("Failed to add transaction: $error"));
-              totalInflow = 0;
-              totalOutflow = 0;
-              i = 0;
-            } else {
-              DocumentReference<Map<String, dynamic>> transaction_amount =
-                  FirebaseFirestore.instance
-                      .collection(
-                          "transaction/$transactionId/transaction_detail/")
-                      .doc(idDocument);
-              var data = {
-                'inflow': totalInflow,
-                'outflow': totalOutflow,
-              };
-              transaction_amount
-                  .update(data)
-                  .then((value) => print("Transaction with CustomID added"))
-                  .catchError(
-                      (error) => print("Failed to add transaction: $error"));
-            }
 
             return Container(
               child: ListDataView(
@@ -285,8 +247,25 @@ class ListDataView extends StatelessWidget {
   final int inflowDetail;
   final int outflowDetail;
 
+  int length;
+
+  Future<void> getTransactionLength() async {
+    length = await getDocumentLength();
+  }
+
+  Future<int> getDocumentLength() async {
+    String id = uid + document['month'] + document['year'];
+    var _myDoc = await FirebaseFirestore.instance
+        .collection(
+            'transaction/$id/transaction_detail/$idDocumentTransaction/transaction_list')
+        .get();
+    var _myDocCount = _myDoc.docs;
+    return _myDocCount.length;
+  }
+
   @override
   Widget build(BuildContext context) {
+    getTransactionLength();
     String idTransactionDetail = document['transaction_id'];
     Future<void> _showMyDialog(String listId) async {
       return showDialog<void>(
@@ -312,6 +291,22 @@ class ListDataView extends StatelessWidget {
                           'transaction/$idTransactionDetail/transaction_detail/$idDocumentTransaction/transaction_list')
                       .doc(listId)
                       .delete();
+                  await Database.updateTransactionFlowMonth(
+                    uid: uid,
+                    idDocument: idTransactionDetail,
+                    idTransactionMonth: idDocumentTransaction,
+                  );
+
+                  await Database.updateTransactionFlow(
+                      idDocument: idTransactionDetail);
+
+                  await Database.updateAmountUser(uid: uid);
+
+                  if (length <= 1) {
+                    await Database.updateTransactionListDefault(
+                        idDocument: idTransactionDetail,
+                        idDocumentDetail: idDocumentTransaction);
+                  }
                 },
               ),
               new FlatButton(
